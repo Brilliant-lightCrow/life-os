@@ -1,926 +1,613 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#060608">
+<meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Life OS">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <title>Life OS</title>
 <style>
-:root {
-  --bg: #060608;
-  --bg2: #0d0d12;
-  --bg3: #13131a;
-  --bg4: #1a1a24;
-  --glass: rgba(255,255,255,0.04);
-  --glass2: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --text: #eeeef5;
-  --text2: #8888a0;
-  --text3: #44445a;
-  --g: #34d399; /* green */
-  --g2: rgba(52,211,153,0.12);
-  --g3: rgba(52,211,153,0.25);
-  --c: #22d3ee; /* cyan */
-  --c2: rgba(34,211,238,0.1);
-  --a: #f59e0b; /* amber */
-  --a2: rgba(245,158,11,0.1);
-  --r: #f87171; /* red */
-  --r2: rgba(248,113,113,0.1);
-  --p: #a78bfa; /* purple */
-  --p2: rgba(167,139,250,0.1);
-  --rad: 18px;
-  --rad-sm: 12px;
-  --rad-xs: 8px;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0a0f;
+  --card:#111118;
+  --card2:#161620;
+  --line:rgba(255,255,255,0.06);
+  --line2:rgba(255,255,255,0.11);
+  --txt:#f2f2fa;
+  --txt2:#6b6b88;
+  --txt3:#2e2e42;
+  --green:#00ff88;
+  --green-d:rgba(0,255,136,0.1);
+  --green-d2:rgba(0,255,136,0.18);
+  --cyan:#00cfff;
+  --cyan-d:rgba(0,207,255,0.1);
+  --red:#ff4f6a;
+  --red-d:rgba(255,79,106,0.1);
+  --gold:#ffcc00;
+  --gold-d:rgba(255,204,0,0.1);
+  --purple:#9b6dff;
+  --purple-d:rgba(155,109,255,0.1);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overscroll-behavior: none; }
-body { display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; }
-::-webkit-scrollbar { display: none; }
-input, select, button { font-family: 'DM Sans', sans-serif; }
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);overscroll-behavior:none;}
+body{display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+::-webkit-scrollbar{display:none;}
 
-/* ── SCREENS ── */
-main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.screen { display: none; padding: 0 0 100px; }
-.screen.active { display: block; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.screen.active { animation: fadeUp .22s ease; }
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:99;padding-bottom:env(safe-area-inset-bottom);}
+.nav-inner{display:flex;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);border-top:1px solid var(--line);padding:4px 0;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border:none;background:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:10px;font-weight:500;color:var(--txt3);transition:color .15s;letter-spacing:.03em;}
+.nb svg{width:22px;height:22px;stroke-width:1.5;}
+.nb.on{color:var(--green);}
 
-/* ── BOTTOM NAV ── */
-.bnav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px;
-  background: rgba(6,6,8,0.88);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border-top: 0.5px solid var(--border);
-  display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+/* SCREENS */
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scr{display:none;padding-bottom:90px;animation:up .2s ease both;}
+.scr.on{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ─── TODAY SCREEN ─── */
+.today-top{padding:calc(28px + env(safe-area-inset-top)) 20px 20px;}
+.day-label{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--txt2);text-transform:uppercase;margin-bottom:6px;}
+.day-greeting{font-size:30px;font-weight:800;line-height:1.15;letter-spacing:-.5px;}
+.day-greeting em{font-style:normal;color:var(--green);}
+
+/* Big ring */
+.ring-hero{display:flex;justify-content:center;padding:24px 0 16px;position:relative;}
+.ring-hero svg{filter:drop-shadow(0 0 14px rgba(0,255,136,0.25));}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-pct{font-size:38px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.ring-lbl{font-size:12px;color:var(--txt2);margin-top:2px;}
+
+/* Habit group */
+.hgroup{padding:0 16px;margin-bottom:4px;}
+.hgroup-label{display:flex;align-items:center;gap:8px;padding:14px 4px 8px;}
+.hgroup-dot{width:6px;height:6px;border-radius:50%;background:var(--txt3);}
+.hgroup-dot.morning{background:var(--gold);}
+.hgroup-dot.afternoon{background:var(--cyan);}
+.hgroup-dot.evening{background:var(--purple);}
+.hgroup-dot.anytime{background:var(--txt2);}
+.hgroup-name{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt2);text-transform:uppercase;}
+.hgroup-count{font-size:11px;color:var(--txt3);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+
+/* Habit row */
+.hrow{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:14px 16px;margin-bottom:8px;cursor:pointer;
+  transition:border-color .2s,background .2s,transform .1s;
+  position:relative;overflow:hidden;
 }
-.nb { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; border: none; background: none; color: var(--text3); font-size: 10px; cursor: pointer; transition: color .2s; letter-spacing: .03em; }
-.nb svg { width: 22px; height: 22px; stroke-width: 1.6; transition: transform .2s; }
-.nb.active { color: var(--g); }
-.nb.active svg { transform: scale(1.12); }
+.hrow:active{transform:scale(0.97);}
+.hrow.done{border-color:rgba(0,255,136,0.2);background:linear-gradient(135deg,rgba(0,255,136,0.05) 0%,var(--card) 60%);}
 
-/* ── HEADER ── */
-.page-hdr { padding: 56px 20px 16px; padding-top: calc(56px + env(safe-area-inset-top)); }
-.page-hdr.compact { padding-top: calc(20px + env(safe-area-inset-top)); padding-bottom: 12px; }
-.greeting { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.5px; line-height: 1.15; }
-.greeting span { color: var(--g); }
-.subhead { font-size: 13px; color: var(--text2); margin-top: 4px; }
+/* Ring check */
+.hring{position:relative;flex-shrink:0;}
+.hring svg{display:block;}
+.hring-track{fill:none;stroke:var(--txt3);stroke-width:2.5;}
+.hring-fill{fill:none;stroke:var(--green);stroke-width:2.5;stroke-linecap:round;transform:rotate(-90deg);transform-origin:16px 16px;stroke-dasharray:88;stroke-dashoffset:88;transition:stroke-dashoffset .35s cubic-bezier(.4,0,.2,1);}
+.hring.done .hring-fill{stroke-dashoffset:0;}
+.hring-check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.hring.done .hring-check{opacity:1;}
 
-/* ── TODAY PROGRESS RING ── */
-.today-ring-row { display: flex; align-items: center; gap: 16px; margin: 16px 20px 0; padding: 16px; background: var(--glass); border: 0.5px solid var(--border); border-radius: var(--rad); }
-.ring-outer { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
-.ring-outer svg { transform: rotate(-90deg); }
-.ring-track { fill: none; stroke: var(--bg4); stroke-width: 5; }
-.ring-prog { fill: none; stroke: var(--g); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1); }
-.ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); }
-.ring-info { flex: 1; }
-.ring-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
-.ring-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
-.ring-pills { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-.rpill { font-size: 11px; padding: 3px 9px; border-radius: 100px; font-weight: 500; }
-.rpill-g { background: var(--g2); color: var(--g); }
-.rpill-a { background: var(--a2); color: var(--a); }
-.rpill-r { background: var(--r2); color: var(--r); }
+/* Habit content */
+.hcontent{flex:1;min-width:0;}
+.hname{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .2s;}
+.hname.done{color:var(--txt2);text-decoration:line-through;text-decoration-color:var(--txt3);}
+.hmeta{display:flex;align-items:center;gap:10px;margin-top:5px;}
+.hstreak{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--gold);font-family:'JetBrains Mono',monospace;}
+.hstreak svg{width:11px;height:11px;fill:var(--gold);}
+.hweek{display:flex;gap:3px;}
+.wd{width:8px;height:8px;border-radius:2px;background:var(--txt3);transition:background .2s;}
+.wd.on{background:var(--green);}
+.wd.today.on{background:var(--green);box-shadow:0 0 5px rgba(0,255,136,0.6);}
+.hdel{background:none;border:none;cursor:pointer;color:var(--txt3);font-size:20px;padding:2px 4px;flex-shrink:0;transition:color .15s;line-height:1;}
+.hdel:active{color:var(--red);}
 
-/* ── TIME GROUPS ── */
-.time-group { margin: 16px 20px 0; }
-.tg-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; padding-left: 2px; }
+/* Burst */
+@keyframes bst{0%{transform:scale(0);opacity:.5;}100%{transform:scale(4);opacity:0;}}
+.bst{position:absolute;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,136,.5) 0%,transparent 70%);pointer-events:none;top:50%;left:50%;margin:-30px 0 0 -30px;animation:bst .5s ease forwards;}
 
-/* ── HABIT CARD ── */
-.hab-card {
-  background: var(--bg2);
-  border: 0.5px solid var(--border);
-  border-radius: var(--rad);
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  display: flex; align-items: center; gap: 14px;
-  position: relative; overflow: hidden;
-  transition: transform .12s, border-color .2s;
-  cursor: pointer;
-  -webkit-user-select: none; user-select: none;
+/* Empty */
+.empty{padding:48px 32px;text-align:center;}
+.empty-emoji{font-size:52px;margin-bottom:16px;}
+.empty-h{font-size:20px;font-weight:800;margin-bottom:8px;}
+.empty-p{font-size:14px;color:var(--txt2);line-height:1.7;margin-bottom:28px;}
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.tpl{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:14px 12px;cursor:pointer;text-align:left;transition:all .15s;}
+.tpl:active{transform:scale(0.96);background:var(--card2);}
+.tpl-icon{font-size:22px;margin-bottom:6px;}
+.tpl-name{font-size:13px;font-weight:600;}
+.tpl-when{font-size:11px;color:var(--txt2);margin-top:2px;}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));right:18px;
+  width:54px;height:54px;border-radius:50%;background:var(--green);color:#000;
+  border:none;cursor:pointer;font-size:28px;font-weight:300;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px rgba(0,255,136,.35);
+  transition:transform .15s,box-shadow .15s;z-index:80;
 }
-.hab-card:active { transform: scale(0.975); }
-.hab-card.done { border-color: rgba(52,211,153,0.25); }
-.hab-card.done::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(52,211,153,0.06) 0%, transparent 60%); pointer-events: none; }
+.fab:active{transform:scale(0.9);box-shadow:0 2px 12px rgba(0,255,136,.2);}
+.fab.hide{display:none;}
 
-/* ── CHECKMARK ── */
-.hchk {
-  width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text3);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: all .2s cubic-bezier(.34,1.56,.64,1);
+/* Sheet */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;backdrop-filter:blur(6px);}
+.overlay.on{display:block;}
+.sheet{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:430px;background:var(--card2);
+  border-radius:24px 24px 0 0;border-top:1px solid var(--line2);
+  padding:14px 20px calc(28px + env(safe-area-inset-bottom));z-index:201;
+  transition:transform .3s cubic-bezier(.32,0,.15,1);
 }
-.hchk.done { background: var(--g); border-color: var(--g); transform: scale(1.05); }
-.hchk svg { display: none; }
-.hchk.done svg { display: block; }
+.sheet.on{transform:translateX(-50%) translateY(0);}
+.sheet-bar{width:36px;height:4px;background:var(--txt3);border-radius:2px;margin:0 auto 22px;}
+.sheet-h{font-size:20px;font-weight:800;margin-bottom:18px;}
+.igroup{margin-bottom:16px;}
+.ilabel{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--txt2);text-transform:uppercase;margin-bottom:8px;display:block;}
+.ifield{background:var(--bg);border:1px solid var(--line2);border-radius:12px;color:var(--txt);padding:14px;font-size:15px;width:100%;outline:none;font-family:'Outfit',sans-serif;transition:border-color .2s;}
+.ifield:focus{border-color:var(--green);}
+::placeholder{color:var(--txt3);}
+.tpills{display:flex;gap:8px;flex-wrap:wrap;}
+.tpill{padding:9px 18px;border-radius:100px;border:1px solid var(--line2);background:none;color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif;}
+.tpill.on{background:var(--green-d2);color:var(--green);border-color:rgba(0,255,136,.35);}
+.sheet-cta{width:100%;padding:16px;border-radius:14px;background:var(--green);color:#000;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:10px;font-family:'Outfit',sans-serif;transition:opacity .15s;}
+.sheet-cta:active{opacity:.8;}
 
-/* ── HABIT INFO ── */
-.hinfo { flex: 1; min-width: 0; }
-.hname { font-size: 15px; font-weight: 500; transition: color .2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hname.done { color: var(--text2); text-decoration: line-through; }
-.hmeta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-.hstreak { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--a); font-family: 'DM Mono', monospace; }
-.hstreak svg { width: 12px; height: 12px; fill: var(--a); }
-.hweek { display: flex; gap: 3px; }
-.wdot { width: 7px; height: 7px; border-radius: 2px; background: var(--bg4); transition: background .2s; }
-.wdot.on { background: var(--g); }
-.wdot.today { background: var(--g); box-shadow: 0 0 4px var(--g); }
+/* ─── INSIGHTS ─── */
+.ins-top{padding:calc(28px + env(safe-area-inset-top)) 20px 16px;}
+.ins-h{font-size:26px;font-weight:900;letter-spacing:-.5px;}
+.ins-sub{font-size:13px;color:var(--txt2);margin-top:4px;}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:4px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 12px;text-align:center;}
+.stat-n{font-size:26px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.stat-l{font-size:10px;color:var(--txt2);margin-top:5px;letter-spacing:.04em;font-weight:500;}
+.sg{color:var(--green);}
+.sc{color:var(--cyan);}
+.sa{color:var(--gold);}
+.sec-card{margin:12px 16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;}
+.sec-h{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt2);text-transform:uppercase;margin-bottom:14px;}
 
-/* ── TAP BURST ANIMATION ── */
-@keyframes burst { 0% { transform: scale(0); opacity: .7; } 100% { transform: scale(3); opacity: 0; } }
-.burst { position: absolute; width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, var(--g) 0%, transparent 70%); pointer-events: none; transform: scale(0); animation: burst .5s ease forwards; left: 50%; top: 50%; margin-left: -40px; margin-top: -40px; }
+/* Heatmap */
+.hm{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;}
+.hmc{aspect-ratio:1;border-radius:3px;background:var(--txt3);}
+.hmc.l1{background:rgba(0,255,136,.15);}
+.hmc.l2{background:rgba(0,255,136,.35);}
+.hmc.l3{background:rgba(0,255,136,.6);}
+.hmc.l4{background:var(--green);}
+.hm-leg{display:flex;align-items:center;gap:5px;margin-top:8px;justify-content:flex-end;font-size:10px;color:var(--txt2);}
+.hms{width:9px;height:9px;border-radius:2px;}
 
-/* ── EMPTY STATE ── */
-.empty-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 32px; }
-.empty-icon { font-size: 48px; margin-bottom: 16px; }
-.empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.empty-sub { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 24px; }
+/* Habit rate rows */
+.hrate{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
+.hrate:last-child{border-bottom:none;}
+.hrate-name{flex:1;font-size:14px;font-weight:500;}
+.hrate-bar{width:64px;height:4px;background:var(--txt3);border-radius:2px;overflow:hidden;}
+.hrate-fill{height:100%;background:var(--green);border-radius:2px;}
+.hrate-pct{font-size:12px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace;min-width:32px;text-align:right;}
 
-/* ── TEMPLATE CHIPS ── */
-.template-section { padding: 0 20px; margin-top: 8px; }
-.tpl-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
-.tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.tpl-chip {
-  background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--rad-sm);
-  padding: 12px; cursor: pointer; transition: all .15s; text-align: left;
-}
-.tpl-chip:active { transform: scale(0.96); background: var(--bg3); }
-.tpl-icon { font-size: 20px; margin-bottom: 6px; }
-.tpl-name { font-size: 13px; font-weight: 500; }
-.tpl-time { font-size: 11px; color: var(--text2); margin-top: 2px; }
+/* ─── FOCUS ─── */
+.foc-top{padding:calc(28px + env(safe-area-inset-top)) 20px 16px;}
+.foc-h{font-size:26px;font-weight:900;letter-spacing:-.5px;}
+.timer-card{margin:0 16px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 20px;text-align:center;}
+.tsel{background:var(--bg);color:var(--txt);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;font-size:14px;width:100%;outline:none;appearance:none;-webkit-appearance:none;font-family:'Outfit',sans-serif;margin-bottom:20px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b88' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.tring{position:relative;width:160px;height:160px;margin:0 auto 20px;}
+.tring svg{transform:rotate(-90deg);}
+.tring-track{fill:none;stroke:var(--txt3);stroke-width:6;}
+.tring-fill{fill:none;stroke:var(--cyan);stroke-width:6;stroke-linecap:round;stroke-dasharray:427;stroke-dashoffset:427;transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(0,207,255,.4));}
+.tcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ttime{font-size:46px;font-weight:900;letter-spacing:-2px;line-height:1;font-family:'JetBrains Mono',monospace;}
+.tst{font-size:10px;color:var(--txt2);letter-spacing:.12em;margin-top:4px;}
+.brow{display:flex;gap:8px;justify-content:center;}
+.btn{padding:13px 22px;border-radius:100px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .15s;font-family:'Outfit',sans-serif;}
+.btn:active{transform:scale(0.93);}
+.btn-c{background:var(--cyan);color:#000;}
+.btn-g{background:var(--card2);color:var(--txt);border:1px solid var(--line2);}
+.srow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);}
+.srow:last-child{border-bottom:none;}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+.sname{flex:1;font-size:14px;font-weight:500;}
+.sdate{font-size:11px;color:var(--txt2);font-family:'JetBrains Mono',monospace;}
+.sbadge{background:var(--cyan-d);color:var(--cyan);font-size:11px;padding:3px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;}
+.sdel{background:none;border:none;cursor:pointer;color:var(--txt3);font-size:18px;padding:2px 4px;}
+.sdel:active{color:var(--red);}
 
-/* ── ADD HABIT ── */
-.add-fab {
-  position: fixed; bottom: calc(72px + env(safe-area-inset-bottom)); right: 20px;
-  width: 52px; height: 52px; border-radius: 50%;
-  background: var(--g); color: #000; border: none; cursor: pointer;
-  font-size: 26px; font-weight: 300; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(52,211,153,0.4);
-  transition: transform .15s, box-shadow .15s; z-index: 90;
-}
-.add-fab:active { transform: scale(0.92); box-shadow: 0 2px 10px rgba(52,211,153,0.3); }
-.add-fab.hidden { display: none; }
+/* ─── HEALTH ─── */
+.hl-top{padding:calc(28px + env(safe-area-inset-top)) 20px 16px;}
+.hl-h{font-size:26px;font-weight:900;letter-spacing:-.5px;}
+.log-card{margin:0 16px;background:var(--card);border-left:3px solid var(--red);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:16px;padding:18px;}
+.hg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.hf label{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.hf input{background:var(--bg);border:1px solid var(--line2);border-radius:10px;color:var(--txt);padding:11px 10px;font-size:14px;width:100%;outline:none;font-family:'Outfit',sans-serif;transition:border-color .2s;}
+.hf input:focus{border-color:var(--red);}
+.sbtn{width:100%;padding:14px;border-radius:12px;background:var(--red);color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:opacity .15s;}
+.sbtn:active{opacity:.8;}
+.cleg{display:flex;gap:14px;margin-bottom:10px;font-size:11px;color:var(--txt2);}
+.cld{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle;}
 
-/* ── BOTTOM SHEET ── */
-.sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; backdrop-filter: blur(4px); }
-.sheet-overlay.open { display: block; }
-.sheet {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
-  width: 100%; max-width: 430px; background: var(--bg2);
-  border-radius: 24px 24px 0 0; border-top: 0.5px solid var(--border2);
-  padding: 12px 20px 32px; z-index: 201;
-  transition: transform .3s cubic-bezier(.4,0,.2,1);
-}
-.sheet.open { transform: translateX(-50%) translateY(0); }
-.sheet-handle { width: 36px; height: 4px; background: var(--bg4); border-radius: 2px; margin: 0 auto 20px; }
-.sheet-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
-.input-group { margin-bottom: 14px; }
-.input-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; display: block; letter-spacing: .04em; }
-.input-field {
-  background: var(--bg3); border: 0.5px solid var(--border2); border-radius: var(--rad-xs);
-  color: var(--text); padding: 13px 14px; font-size: 15px; width: 100%; outline: none;
-  transition: border-color .2s;
-}
-.input-field:focus { border-color: var(--g); }
-::placeholder { color: var(--text3); }
-.time-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.tpill {
-  padding: 8px 16px; border-radius: 100px; border: 0.5px solid var(--border2);
-  background: none; color: var(--text2); font-size: 13px; cursor: pointer;
-  transition: all .15s; font-family: 'DM Sans', sans-serif;
-}
-.tpill.sel { background: var(--g2); color: var(--g); border-color: var(--g3); }
-.sheet-btn {
-  width: 100%; padding: 16px; border-radius: var(--rad-sm);
-  background: var(--g); color: #000; font-size: 15px; font-weight: 700;
-  border: none; cursor: pointer; margin-top: 8px;
-  transition: opacity .15s, transform .1s;
-}
-.sheet-btn:active { transform: scale(0.98); opacity: .9; }
-
-/* ── HEATMAP ── */
-.heatmap-wrap { padding: 0 20px; margin-top: 16px; }
-.hm-grid { display: grid; grid-template-columns: repeat(13, 1fr); gap: 3px; }
-.hm-cell { aspect-ratio: 1; border-radius: 2px; background: var(--bg4); transition: background .2s; }
-.hm-cell.l1 { background: rgba(52,211,153,0.2); }
-.hm-cell.l2 { background: rgba(52,211,153,0.45); }
-.hm-cell.l3 { background: rgba(52,211,153,0.7); }
-.hm-cell.l4 { background: var(--g); }
-.hm-month-labels { display: flex; justify-content: space-between; margin-top: 4px; }
-.hm-ml { font-size: 9px; color: var(--text3); font-family: 'DM Mono', monospace; }
-.hm-legend { display: flex; align-items: center; gap: 6px; margin-top: 8px; justify-content: flex-end; }
-.hm-legend span { font-size: 10px; color: var(--text3); }
-.hm-swatch { width: 10px; height: 10px; border-radius: 2px; }
-
-/* ── INSIGHTS ── */
-.insight-stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 20px; margin-top: 16px; }
-.istat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--rad-sm); padding: 14px 12px; text-align: center; }
-.istat-val { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; line-height: 1; }
-.istat-lbl { font-size: 10px; color: var(--text2); margin-top: 5px; letter-spacing: .04em; }
-.iv-g { color: var(--g); }
-.iv-a { color: var(--a); }
-.iv-c { color: var(--c); }
-.section-card { margin: 14px 20px 0; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--rad); padding: 16px; }
-.sc-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--text2); text-transform: uppercase; margin-bottom: 14px; }
-.chart-wrap { position: relative; width: 100%; }
-
-/* ── HABIT DETAIL ROWS (insights) ── */
-.hi-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-.hi-row:last-child { border-bottom: none; }
-.hi-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--g); }
-.hi-name { flex: 1; font-size: 14px; }
-.hi-pct { font-size: 13px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--g); }
-.hi-bar-wrap { width: 60px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
-.hi-bar { height: 100%; background: var(--g); border-radius: 2px; }
-
-/* ── FOCUS SCREEN ── */
-.focus-wrap { padding: 0 20px; }
-.timer-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--rad); padding: 24px 20px; margin-top: 16px; text-align: center; position: relative; overflow: hidden; }
-.timer-card::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: radial-gradient(circle, rgba(34,211,238,0.06) 0%, transparent 70%); pointer-events: none; }
-select.timer-sel { background: var(--bg3); color: var(--text); border: 0.5px solid var(--border2); border-radius: var(--rad-xs); padding: 11px 14px; font-size: 14px; width: 100%; outline: none; margin-bottom: 20px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2344445a' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
-.timer-ring-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto 20px; }
-.timer-ring-wrap svg { transform: rotate(-90deg); }
-.timer-ring-track { fill: none; stroke: var(--bg4); stroke-width: 6; }
-.timer-ring-fill { fill: none; stroke: var(--c); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .5s cubic-bezier(.4,0,.2,1); }
-.timer-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.timer-time { font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
-.timer-st { font-size: 10px; color: var(--text2); letter-spacing: .1em; margin-top: 4px; font-family: 'DM Mono', monospace; }
-.btn-row { display: flex; gap: 8px; justify-content: center; }
-.btn { padding: 13px 22px; border-radius: 100px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
-.btn:active { transform: scale(0.94); }
-.btn-c { background: var(--c); color: #000; }
-.btn-ghost { background: var(--bg3); color: var(--text); border: 0.5px solid var(--border2); }
-.sess-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-.sess-item:last-child { border-bottom: none; }
-.sess-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex-shrink: 0; }
-.sess-name { flex: 1; font-size: 14px; }
-.sess-badge { background: var(--c2); color: var(--c); font-size: 11px; padding: 3px 9px; border-radius: 100px; font-family: 'DM Mono', monospace; }
-.delx { background: none; border: none; color: var(--text3); font-size: 18px; cursor: pointer; padding: 0 4px; }
-.delx:active { color: var(--r); }
-
-/* ── HEALTH SCREEN ── */
-.health-wrap { padding: 0 20px; }
-.log-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--rad); padding: 18px; margin-top: 16px; position: relative; overflow: hidden; }
-.log-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--r); }
-.hgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-.hfield label { font-size: 11px; color: var(--text2); margin-bottom: 6px; display: block; letter-spacing: .04em; }
-.hfield input { background: var(--bg3); border: 0.5px solid var(--border2); border-radius: var(--rad-xs); color: var(--text); padding: 11px 10px; font-size: 14px; width: 100%; outline: none; transition: border-color .2s; }
-.hfield input:focus { border-color: var(--r); }
-.save-btn { width: 100%; padding: 14px; border-radius: var(--rad-xs); background: var(--r); color: #fff; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: opacity .15s, transform .1s; }
-.save-btn:active { transform: scale(0.98); }
-.chart-legend { display: flex; gap: 14px; margin-bottom: 10px; font-size: 11px; color: var(--text2); flex-wrap: wrap; }
-.lg-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: middle; }
-
-/* ── CHECKLIST SCREEN ── */
-.cl-wrap { padding: 0 20px; }
-.dscroll { display: flex; gap: 6px; overflow-x: auto; padding: 16px 20px 0; }
-.dchip { padding: 8px 16px; border-radius: 100px; border: 0.5px solid var(--border2); background: none; color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Syne', sans-serif; white-space: nowrap; flex-shrink: 0; transition: all .2s; letter-spacing: .04em; }
-.dchip.active { background: var(--c2); color: var(--c); border-color: rgba(34,211,238,0.3); }
-.prog-row { display: flex; align-items: center; gap: 10px; margin: 12px 20px 0; }
-.prog-track { flex: 1; height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
-.prog-fill { height: 100%; background: var(--c); border-radius: 2px; transition: width .4s cubic-bezier(.4,0,.2,1); }
-.prog-txt { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; min-width: 32px; text-align: right; }
-.day-sub { font-size: 12px; color: var(--text2); margin: 6px 20px 14px; }
-.cl-block { margin: 0 20px 8px; border-radius: var(--rad); overflow: hidden; border: 0.5px solid var(--border); }
-.blk-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg2); }
-.blk-time { font-size: 10px; color: var(--text2); flex-shrink: 0; font-family: 'DM Mono', monospace; }
-.blk-title { font-size: 12px; font-weight: 500; flex: 1; font-family: 'Syne', sans-serif; }
-.blk-tag { font-size: 10px; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; font-weight: 600; }
-.tg { background: var(--g2); color: var(--g); }
-.ta { background: var(--c2); color: var(--c); }
-.tf { background: var(--p2); color: var(--p); }
-.tr { background: var(--glass); color: var(--text2); }
-.tc { background: var(--a2); color: var(--a); }
-.blk-items { background: var(--bg); }
-.chk-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-top: 0.5px solid var(--border); cursor: pointer; transition: background .12s; }
-.chk-row:active { background: var(--bg2); }
-.chk-row input { margin-top: 2px; accent-color: var(--c); flex-shrink: 0; width: 15px; height: 15px; }
-.chk-row label { font-size: 13px; line-height: 1.5; cursor: pointer; }
-.chk-row.done label { text-decoration: line-through; color: var(--text2); }
+/* ─── CHECKLIST ─── */
+.cl-top{padding:calc(28px + env(safe-area-inset-top)) 20px 8px;}
+.cl-h{font-size:26px;font-weight:900;letter-spacing:-.5px;}
+.dscroll{display:flex;gap:6px;overflow-x:auto;padding:12px 16px 0;}
+.dc{padding:8px 16px;border-radius:100px;border:1px solid var(--line2);background:none;color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;letter-spacing:.04em;font-family:'Outfit',sans-serif;}
+.dc.on{background:var(--cyan-d);color:var(--cyan);border-color:rgba(0,207,255,.3);}
+.prow{display:flex;align-items:center;gap:10px;margin:12px 16px 0;}
+.ptrack{flex:1;height:3px;background:var(--txt3);border-radius:2px;overflow:hidden;}
+.pfill{height:100%;background:var(--cyan);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.ppct{font-size:11px;color:var(--txt2);font-family:'JetBrains Mono',monospace;min-width:32px;text-align:right;}
+.dsub{font-size:12px;color:var(--txt2);margin:6px 16px 14px;}
+.clblock{margin:0 16px 8px;border-radius:16px;overflow:hidden;border:1px solid var(--line);}
+.blkhdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);}
+.blkt{font-size:10px;color:var(--txt2);flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.blkti{font-size:12px;font-weight:600;flex:1;font-family:'Outfit',sans-serif;}
+.blktag{font-size:10px;padding:2px 8px;border-radius:100px;flex-shrink:0;font-weight:700;}
+.tg{background:var(--green-d);color:var(--green);}
+.ta{background:var(--cyan-d);color:var(--cyan);}
+.tf{background:var(--purple-d);color:var(--purple);}
+.tr{background:rgba(255,255,255,.05);color:var(--txt2);}
+.tc{background:var(--gold-d);color:var(--gold);}
+.blkitems{background:var(--bg);}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;transition:background .12s;}
+.crow:active{background:var(--card);}
+.crow input{margin-top:2px;accent-color:var(--cyan);width:15px;height:15px;flex-shrink:0;}
+.crow label{font-size:13px;line-height:1.5;cursor:pointer;}
+.crow.done label{text-decoration:line-through;color:var(--txt2);}
 </style>
 </head>
 <body>
 
-<!-- ADD HABIT FAB -->
-<button class="add-fab" id="add-fab" onclick="openSheet()">+</button>
-
-<!-- BOTTOM SHEET OVERLAY -->
-<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+<button class="fab" id="fab" onclick="openSheet()">+</button>
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-title">New habit</div>
-  <div class="input-group">
-    <label class="input-label">Habit name</label>
-    <input class="input-field" id="hab-name-input" placeholder="e.g. Morning run, Read 10 pages..." maxlength="40">
+  <div class="sheet-bar"></div>
+  <div class="sheet-h">New habit</div>
+  <div class="igroup">
+    <label class="ilabel">Name</label>
+    <input class="ifield" id="hinput" placeholder="e.g. Morning run, Read 20 pages..." maxlength="40" onkeydown="if(event.key==='Enter')doAdd()">
   </div>
-  <div class="input-group">
-    <label class="input-label">Time of day</label>
-    <div class="time-pills">
-      <button class="tpill sel" data-t="Morning" onclick="selTime(this)">Morning</button>
-      <button class="tpill" data-t="Afternoon" onclick="selTime(this)">Afternoon</button>
-      <button class="tpill" data-t="Evening" onclick="selTime(this)">Evening</button>
-      <button class="tpill" data-t="Anytime" onclick="selTime(this)">Anytime</button>
+  <div class="igroup">
+    <label class="ilabel">When</label>
+    <div class="tpills">
+      <button class="tpill on" data-t="Morning" onclick="pickTime(this)">Morning</button>
+      <button class="tpill" data-t="Afternoon" onclick="pickTime(this)">Afternoon</button>
+      <button class="tpill" data-t="Evening" onclick="pickTime(this)">Evening</button>
+      <button class="tpill" data-t="Anytime" onclick="pickTime(this)">Anytime</button>
     </div>
   </div>
-  <button class="sheet-btn" onclick="addHabit()">Add habit</button>
+  <button class="sheet-cta" onclick="doAdd()">Add habit</button>
 </div>
 
 <main>
-  <!-- TODAY / HABITS -->
-  <div class="screen active" id="sc-today">
-    <div class="page-hdr">
-      <div class="greeting" id="greeting">Good morning,<br><span>let's build today.</span></div>
-      <div class="subhead" id="today-date"></div>
-    </div>
-
-    <!-- Progress ring -->
-    <div class="today-ring-row" id="ring-row">
-      <div class="ring-outer">
-        <svg width="64" height="64" viewBox="0 0 64 64">
-          <circle class="ring-track" cx="32" cy="32" r="27"/>
-          <circle class="ring-prog" id="main-ring" cx="32" cy="32" r="27" stroke-dasharray="170" stroke-dashoffset="170"/>
-        </svg>
-        <div class="ring-pct" id="ring-pct">0%</div>
-      </div>
-      <div class="ring-info">
-        <div class="ring-title" id="ring-title">0 of 0 done</div>
-        <div class="ring-sub" id="ring-sub">Tap a habit to check it off</div>
-        <div class="ring-pills" id="ring-pills"></div>
-      </div>
-    </div>
-
-    <!-- Habit groups -->
-    <div id="habit-groups"></div>
-
-    <!-- Empty state -->
-    <div class="empty-state" id="empty-state" style="display:none">
-      <div class="empty-icon">🌱</div>
-      <div class="empty-title">Your journey starts here</div>
-      <div class="empty-sub">Add your first habit and begin building the life you want — one day at a time.</div>
-    </div>
-
-    <!-- Template library -->
-    <div class="template-section" id="template-section" style="display:none">
-      <div class="tpl-label">Quick start templates</div>
-      <div class="tpl-grid" id="tpl-grid"></div>
+<!-- TODAY -->
+<div class="scr on" id="scr-today">
+  <div class="today-top">
+    <div class="day-label" id="dlabel"></div>
+    <div class="day-greeting" id="dgreet"></div>
+  </div>
+  <div class="ring-hero" id="rhero">
+    <svg width="160" height="160" viewBox="0 0 160 160">
+      <circle cx="80" cy="80" r="68" fill="none" stroke="#2e2e42" stroke-width="8"/>
+      <circle id="mring" cx="80" cy="80" r="68" fill="none" stroke="#00ff88" stroke-width="8" stroke-linecap="round" stroke-dasharray="427" stroke-dashoffset="427" transform="rotate(-90 80 80)" style="transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 12px rgba(0,255,136,.3));"/>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-pct" id="rpct">0%</div>
+      <div class="ring-lbl" id="rlbl">0 of 0</div>
     </div>
   </div>
+  <div id="hgroups"></div>
+  <div class="empty" id="emptystate" style="display:none">
+    <div class="empty-emoji">🌱</div>
+    <div class="empty-h">Start your streak today</div>
+    <div class="empty-p">Pick a habit below or tap + to create your own. Every chain starts with a single link.</div>
+    <div class="tpl-grid" id="tplgrid"></div>
+  </div>
+</div>
 
-  <!-- INSIGHTS -->
-  <div class="screen" id="sc-insights">
-    <div class="page-hdr compact">
-      <div class="greeting" style="font-size:22px">Insights</div>
-      <div class="subhead">Your consistency over time</div>
-    </div>
-    <div class="insight-stat-row">
-      <div class="istat"><div class="istat-val iv-g" id="is-streak">0</div><div class="istat-lbl">best streak</div></div>
-      <div class="istat"><div class="istat-val iv-a" id="is-rate">0%</div><div class="istat-lbl">this week</div></div>
-      <div class="istat"><div class="istat-val iv-c" id="is-total">0</div><div class="istat-lbl">total done</div></div>
-    </div>
-    <!-- Heatmap -->
-    <div class="heatmap-wrap">
-      <div class="section-card" style="margin:0;">
-        <div class="sc-title">13-week activity</div>
-        <div class="hm-grid" id="hm-grid"></div>
-        <div class="hm-legend">
-          <span>Less</span>
-          <div class="hm-swatch" style="background:var(--bg4)"></div>
-          <div class="hm-swatch l1" style="background:rgba(52,211,153,0.2)"></div>
-          <div class="hm-swatch l2" style="background:rgba(52,211,153,0.45)"></div>
-          <div class="hm-swatch l4" style="background:var(--g)"></div>
-          <span>More</span>
-        </div>
-      </div>
-    </div>
-    <!-- Per-habit breakdown -->
-    <div class="section-card">
-      <div class="sc-title">Habits — 7 day rate</div>
-      <div id="hi-list"><p style="font-size:13px;color:var(--text2)">No habits yet.</p></div>
-    </div>
-    <!-- Weekly bar chart -->
-    <div class="section-card">
-      <div class="sc-title">Daily completions — 7 days</div>
-      <div class="chart-wrap" style="height:140px"><canvas id="ch-insights"></canvas></div>
+<!-- INSIGHTS -->
+<div class="scr" id="scr-insights">
+  <div class="ins-top">
+    <div class="ins-h">Insights</div>
+    <div class="ins-sub">Your consistency at a glance</div>
+  </div>
+  <div class="stat3">
+    <div class="stat"><div class="stat-n sg" id="is1">0</div><div class="stat-l">Best streak</div></div>
+    <div class="stat"><div class="stat-n sa" id="is2">0%</div><div class="stat-l">This week</div></div>
+    <div class="stat"><div class="stat-n sc" id="is3">0</div><div class="stat-l">Total done</div></div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-h">13-week activity</div>
+    <div class="hm" id="hmgrid"></div>
+    <div class="hm-leg">
+      <span>Less</span>
+      <div class="hms" style="background:var(--txt3)"></div>
+      <div class="hms" style="background:rgba(0,255,136,.15)"></div>
+      <div class="hms" style="background:rgba(0,255,136,.5)"></div>
+      <div class="hms" style="background:var(--green)"></div>
+      <span>More</span>
     </div>
   </div>
+  <div class="sec-card">
+    <div class="sec-h">7-day completion rate</div>
+    <div id="hratelist"><p style="font-size:13px;color:var(--txt2)">Add habits to see stats.</p></div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-h">Daily completions</div>
+    <div style="position:relative;height:140px"><canvas id="chins"></canvas></div>
+  </div>
+</div>
 
-  <!-- FOCUS -->
-  <div class="screen" id="sc-focus">
-    <div class="page-hdr compact">
-      <div class="greeting" style="font-size:22px">Focus</div>
-      <div class="subhead">Deep work sessions</div>
+<!-- FOCUS -->
+<div class="scr" id="scr-focus">
+  <div class="foc-top">
+    <div class="foc-h">Focus</div>
+  </div>
+  <div class="timer-card">
+    <select class="tsel" id="tpreset" onchange="setPreset(this.value)">
+      <option value="25">Pomodoro — 25 min</option>
+      <option value="50">Deep work — 50 min</option>
+      <option value="15">Short sprint — 15 min</option>
+      <option value="5">Break — 5 min</option>
+    </select>
+    <div class="tring">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="tring-track" cx="80" cy="80" r="68"/>
+        <circle class="tring-fill" id="trf" cx="80" cy="80" r="68"/>
+      </svg>
+      <div class="tcenter">
+        <div class="ttime" id="tdis">25:00</div>
+        <div class="tst" id="tst">READY</div>
+      </div>
     </div>
-    <div class="focus-wrap">
-      <div class="timer-card">
-        <select class="timer-sel" id="timer-preset" onchange="setPreset(this.value)">
-          <option value="25">Pomodoro — 25 min</option>
-          <option value="50">Deep work — 50 min</option>
-          <option value="15">Short sprint — 15 min</option>
-          <option value="5">Break — 5 min</option>
-        </select>
-        <div class="timer-ring-wrap">
-          <svg width="160" height="160" viewBox="0 0 160 160">
-            <circle class="timer-ring-track" cx="80" cy="80" r="68"/>
-            <circle class="timer-ring-fill" id="t-ring" cx="80" cy="80" r="68" stroke-dasharray="427" stroke-dashoffset="427"/>
-          </svg>
-          <div class="timer-center">
-            <div class="timer-time" id="t-display">25:00</div>
-            <div class="timer-st" id="t-status">READY</div>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-c" id="t-start" onclick="toggleTimer()">Start</button>
-          <button class="btn btn-ghost" onclick="resetTimer()">Reset</button>
-          <button class="btn btn-c" id="t-log" style="display:none" onclick="logSession()">Save</button>
-        </div>
-      </div>
-      <div class="section-card" style="margin-top:12px;">
-        <div class="sc-title">Recent sessions</div>
-        <div id="sess-list"><p style="font-size:13px;color:var(--text2)">No sessions yet.</p></div>
-      </div>
+    <div class="brow">
+      <button class="btn btn-c" id="tstart" onclick="toggleTimer()">Start</button>
+      <button class="btn btn-g" onclick="resetTimer()">Reset</button>
+      <button class="btn btn-c" id="tlog" style="display:none" onclick="logSess()">Save</button>
     </div>
   </div>
-
-  <!-- HEALTH -->
-  <div class="screen" id="sc-health">
-    <div class="page-hdr compact">
-      <div class="greeting" style="font-size:22px">Health</div>
-      <div class="subhead">Log your daily vitals</div>
-    </div>
-    <div class="health-wrap">
-      <div class="log-card">
-        <div class="hgrid">
-          <div class="hfield"><label>Sleep (h)</label><input type="number" id="h-sleep" min="0" max="24" step="0.5" placeholder="7.5"></div>
-          <div class="hfield"><label>Water (gl)</label><input type="number" id="h-water" min="0" max="30" placeholder="8"></div>
-          <div class="hfield"><label>Steps</label><input type="number" id="h-steps" min="0" placeholder="8k"></div>
-        </div>
-        <button class="save-btn" id="health-btn" onclick="logHealth()">Save log</button>
-      </div>
-      <div class="section-card" style="margin-top:12px;">
-        <div class="sc-title">Sleep & water — 7 days</div>
-        <div class="chart-legend">
-          <span><span class="lg-dot" style="background:#a78bfa"></span>Sleep</span>
-          <span><span class="lg-dot" style="background:#22d3ee"></span>Water</span>
-        </div>
-        <div class="chart-wrap" style="height:140px"><canvas id="ch-h1"></canvas></div>
-      </div>
-      <div class="section-card" style="margin-top:12px;">
-        <div class="sc-title">Steps — 7 days</div>
-        <div class="chart-wrap" style="height:130px"><canvas id="ch-h2"></canvas></div>
-      </div>
-    </div>
+  <div class="sec-card" style="margin:12px 16px 0">
+    <div class="sec-h">Sessions</div>
+    <div id="sesslist"><p style="font-size:13px;color:var(--txt2)">No sessions yet.</p></div>
   </div>
+</div>
 
-  <!-- CHECKLIST -->
-  <div class="screen" id="sc-checklist">
-    <div class="page-hdr compact">
-      <div class="greeting" style="font-size:22px">Daily plan</div>
-      <div class="subhead">Your forever schedule</div>
+<!-- HEALTH -->
+<div class="scr" id="scr-health">
+  <div class="hl-top"><div class="hl-h">Health</div></div>
+  <div class="log-card">
+    <div class="hg">
+      <div class="hf"><label>Sleep (h)</label><input type="number" id="hs" min="0" max="24" step="0.5" placeholder="7.5"></div>
+      <div class="hf"><label>Water (gl)</label><input type="number" id="hw" min="0" max="30" placeholder="8"></div>
+      <div class="hf"><label>Steps</label><input type="number" id="hst" min="0" placeholder="8k"></div>
     </div>
-    <div class="dscroll" id="days-nav"></div>
-    <div class="prog-row"><div class="prog-track"><div class="prog-fill" id="cl-fill" style="width:0%"></div></div><span class="prog-txt" id="cl-pct">0%</span></div>
-    <div class="day-sub" id="cl-sub"></div>
-    <div id="cl-blocks"></div>
+    <button class="sbtn" id="hlbtn" onclick="logHealth()">Save log</button>
   </div>
+  <div class="sec-card" style="margin-top:12px">
+    <div class="sec-h">Sleep & water — 7 days</div>
+    <div class="cleg">
+      <span><span class="cld" style="background:#9b6dff"></span>Sleep</span>
+      <span><span class="cld" style="background:#00cfff"></span>Water</span>
+    </div>
+    <div style="position:relative;height:140px"><canvas id="chh1"></canvas></div>
+  </div>
+  <div class="sec-card" style="margin-top:12px">
+    <div class="sec-h">Steps — 7 days</div>
+    <div style="position:relative;height:130px"><canvas id="chh2"></canvas></div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="scr" id="scr-checklist">
+  <div class="cl-top"><div class="cl-h">Daily plan</div></div>
+  <div class="dscroll" id="dnav"></div>
+  <div class="prow"><div class="ptrack"><div class="pfill" id="pfill" style="width:0%"></div></div><span class="ppct" id="ppct">0%</span></div>
+  <div class="dsub" id="dsub"></div>
+  <div id="clblocks"></div>
+</div>
 </main>
 
-<nav class="bnav">
-  <button class="nb active" onclick="showScreen('today',this)" id="nb-today">
+<nav class="nav"><div class="nav-inner">
+  <button class="nb on" onclick="go('today',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m11.4-.7l-.7.7m-11.4 11.4l.7-.7m11.4.7l-.7-.7"/></svg>Today
   </button>
-  <button class="nb" onclick="showScreen('insights',this)" id="nb-insights">
+  <button class="nb" onclick="go('insights',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>Insights
   </button>
-  <button class="nb" onclick="showScreen('focus',this)" id="nb-focus">
+  <button class="nb" onclick="go('focus',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>Focus
   </button>
-  <button class="nb" onclick="showScreen('health',this)" id="nb-health">
+  <button class="nb" onclick="go('health',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Health
   </button>
-  <button class="nb" onclick="showScreen('checklist',this)" id="nb-checklist">
+  <button class="nb" onclick="go('checklist',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Plan
   </button>
-</nav>
+</div></nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
-const S = {
-  get: k => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
-};
+const S={get:k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+let habits=S.get('h3')||[],comps=S.get('c3')||[],hlogs=S.get('hl')||[],fsess=S.get('fs')||[],clst=S.get('cl')||{};
+let selTime='Morning',activeDay=new Date().getDay()===0?6:new Date().getDay()-1;
+let tsecs=1500,ttotal=1500,trun=false,tint=null,telap=0,cIns=null,cH1=null,cH2=null;
+const today=()=>new Date().toISOString().split('T')[0];
+const last7=()=>{const d=[];for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);d.push(dt.toISOString().split('T')[0]);}return d;};
+const last91=()=>{const d=[];for(let i=90;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);d.push(dt.toISOString().split('T')[0]);}return d;};
+const dlbl=s=>new Date(s+'T12:00:00').toLocaleDateString('en',{weekday:'short'});
+const done=(id,d)=>comps.some(c=>c.id===id&&c.d===d);
+const strk=id=>{let s=0;for(let i=0;i<365;i++){const dt=new Date();dt.setDate(dt.getDate()-i);if(done(id,dt.toISOString().split('T')[0]))s++;else break;}return s;};
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let habits = S.get('hab2') || [];
-let completions = S.get('comp2') || []; // {habitId, date}
-let healthLogs = S.get('hl') || [];
-let focusSessions = S.get('fs') || [];
-let clState = S.get('cl') || {};
-let selectedTime = 'Morning';
-let activeDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
-let timerSecs = 1500, timerTotal = 1500, timerRunning = false, timerInterval = null, timerElapsed = 0;
-let cInsights = null, cH1 = null, cH2 = null;
-
-// ─── UTILS ────────────────────────────────────────────────────────────────────
-const todayStr = () => new Date().toISOString().split('T')[0];
-const last7 = () => { const d = []; for (let i = 6; i >= 0; i--) { const dt = new Date(); dt.setDate(dt.getDate() - i); d.push(dt.toISOString().split('T')[0]); } return d; };
-const last91 = () => { const d = []; for (let i = 90; i >= 0; i--) { const dt = new Date(); dt.setDate(dt.getDate() - i); d.push(dt.toISOString().split('T')[0]); } return d; };
-const dayLbl = s => new Date(s + 'T12:00:00').toLocaleDateString('en', { weekday: 'short' });
-const isDone = (habitId, date) => completions.some(c => c.habitId === habitId && c.date === date);
-const streak = id => { let s = 0; for (let i = 0; i < 365; i++) { const dt = new Date(); dt.setDate(dt.getDate() - i); if (isDone(id, dt.toISOString().split('T')[0])) s++; else break; } return s; };
-const totalDone = id => completions.filter(c => c.habitId === id).length;
-
-// ─── GREETING ─────────────────────────────────────────────────────────────────
-function updateGreeting() {
-  const h = new Date().getHours();
-  const phrase = h < 12 ? "Good morning," : h < 17 ? "Good afternoon," : "Good evening,";
-  document.getElementById('greeting').innerHTML = `${phrase}<br><span>let's build today.</span>`;
-  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
+// Greeting
+function initGreeting(){
+  const h=new Date().getHours(),n=new Date();
+  const g=h<12?'Good morning,':h<17?'Good afternoon,':'Good evening,';
+  document.getElementById('dlabel').textContent=n.toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('dgreet').innerHTML=g+'<br><em>let\'s build today.</em>';
 }
-updateGreeting();
+initGreeting();
 
-// ─── SCREEN NAV ───────────────────────────────────────────────────────────────
-function showScreen(name, btn) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  document.getElementById('sc-' + name).classList.add('active');
-  btn.classList.add('active');
-  document.getElementById('add-fab').classList.toggle('hidden', name !== 'today');
-  setTimeout(() => {
-    if (name === 'today') renderToday();
-    if (name === 'insights') renderInsights();
-    if (name === 'focus') { renderSessList(); }
-    if (name === 'health') { prefillHealth(); renderHealthCharts(); }
-    if (name === 'checklist') renderChecklist();
-  }, 30);
+// Nav
+function go(name,btn){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('scr-'+name).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('fab').classList.toggle('hide',name!=='today');
+  setTimeout(()=>{
+    if(name==='today')renderToday();
+    if(name==='insights')renderInsights();
+    if(name==='health'){prefillH();renderHCharts();}
+    if(name==='checklist')renderCL();
+  },30);
 }
 
-// ─── ADD HABIT SHEET ──────────────────────────────────────────────────────────
-function openSheet() {
-  document.getElementById('sheet').classList.add('open');
-  document.getElementById('sheet-overlay').classList.add('open');
-  document.getElementById('hab-name-input').focus();
-}
-function closeSheet() {
-  document.getElementById('sheet').classList.remove('open');
-  document.getElementById('sheet-overlay').classList.remove('open');
-}
-function selTime(el) {
-  document.querySelectorAll('.tpill').forEach(p => p.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedTime = el.dataset.t;
-}
-function addHabit(name, time) {
-  const n = name || document.getElementById('hab-name-input').value.trim();
-  const t = time || selectedTime;
-  if (!n) return;
-  habits.push({ id: Date.now(), name: n, time: t });
-  S.set('hab2', habits);
-  if (!name) {
-    document.getElementById('hab-name-input').value = '';
-    closeSheet();
-  }
+// Sheet
+function openSheet(){document.getElementById('sheet').classList.add('on');document.getElementById('overlay').classList.add('on');document.getElementById('hinput').focus();}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('overlay').classList.remove('on');}
+function pickTime(el){document.querySelectorAll('.tpill').forEach(p=>p.classList.remove('on'));el.classList.add('on');selTime=el.dataset.t;}
+function doAdd(name,time){
+  const n=name||document.getElementById('hinput').value.trim();
+  const t=time||selTime;
+  if(!n)return;
+  habits.push({id:Date.now(),name:n,time:t});
+  S.set('h3',habits);
+  if(!name){document.getElementById('hinput').value='';closeSheet();}
   renderToday();
 }
 
-// ─── TEMPLATES ────────────────────────────────────────────────────────────────
-const TEMPLATES = [
-  { icon: '💧', name: 'Drink water', time: 'Morning' },
-  { icon: '📚', name: 'Read 20 pages', time: 'Evening' },
-  { icon: '🏃', name: 'Exercise', time: 'Morning' },
-  { icon: '🧘', name: 'Meditate', time: 'Morning' },
-  { icon: '🥗', name: 'Eat healthy', time: 'Afternoon' },
-  { icon: '😴', name: 'Sleep by 10pm', time: 'Evening' },
-];
+// Templates
+const TPLS=[{i:'💧',n:'Drink water',t:'Morning'},{i:'🏃',n:'Exercise',t:'Morning'},{i:'📚',n:'Read 20 pages',t:'Evening'},{i:'🧘',n:'Meditate',t:'Morning'},{i:'🥗',n:'Eat healthy',t:'Afternoon'},{i:'😴',n:'Sleep by 10pm',t:'Evening'}];
 
-// ─── RENDER TODAY ─────────────────────────────────────────────────────────────
-function renderToday() {
-  const t = todayStr();
-  const empty = habits.length === 0;
-  document.getElementById('empty-state').style.display = empty ? 'flex' : 'none';
-  document.getElementById('template-section').style.display = empty ? 'block' : 'none';
-  document.getElementById('ring-row').style.display = empty ? 'none' : 'flex';
-
-  if (empty) {
-    const grid = document.getElementById('tpl-grid');
-    grid.innerHTML = TEMPLATES.map(t => `
-      <div class="tpl-chip" onclick="addHabit('${t.name}','${t.time}')">
-        <div class="tpl-icon">${t.icon}</div>
-        <div class="tpl-name">${t.name}</div>
-        <div class="tpl-time">${t.time}</div>
-      </div>`).join('');
-    document.getElementById('habit-groups').innerHTML = '';
-    return;
+// Render today
+function renderToday(){
+  const t=today(),empty=habits.length===0;
+  document.getElementById('emptystate').style.display=empty?'block':'none';
+  document.getElementById('rhero').style.display=empty?'none':'flex';
+  if(empty){
+    document.getElementById('tplgrid').innerHTML=TPLS.map(p=>`<div class="tpl" onclick="doAdd('${p.n}','${p.t}')"><div class="tpl-icon">${p.i}</div><div class="tpl-name">${p.n}</div><div class="tpl-when">${p.t}</div></div>`).join('');
+    document.getElementById('hgroups').innerHTML='';return;
   }
-
-  // Progress ring
-  const done = habits.filter(h => isDone(h.id, t)).length;
-  const pct = habits.length ? Math.round((done / habits.length) * 100) : 0;
-  const circ = 170, offset = circ - (pct / 100) * circ;
-  document.getElementById('main-ring').style.strokeDashoffset = offset;
-  document.getElementById('ring-pct').textContent = pct + '%';
-  document.getElementById('ring-title').textContent = `${done} of ${habits.length} done`;
-  document.getElementById('ring-sub').textContent = pct === 100 ? '🎉 Perfect day!' : pct >= 50 ? 'Keep going!' : 'Tap a habit to check it off';
-  
-  // Pills
-  const pills = document.getElementById('ring-pills');
-  const left = habits.length - done;
-  pills.innerHTML = done > 0 ? `<span class="rpill rpill-g">${done} done</span>` : '';
-  if (left > 0) pills.innerHTML += `<span class="rpill rpill-a">${left} left</span>`;
-
-  // Groups
-  const groups = ['Morning', 'Afternoon', 'Evening', 'Anytime'];
-  const container = document.getElementById('habit-groups');
-  container.innerHTML = '';
-
-  groups.forEach(grp => {
-    const grpHabits = habits.filter(h => h.time === grp);
-    if (!grpHabits.length) return;
-    const div = document.createElement('div');
-    div.className = 'time-group';
-    div.innerHTML = `<div class="tg-label">${grp}</div>` +
-      grpHabits.map(h => buildHabCard(h, t)).join('');
+  const doneCount=habits.filter(h=>done(h.id,t)).length;
+  const pct=habits.length?Math.round((doneCount/habits.length)*100):0;
+  document.getElementById('mring').style.strokeDashoffset=427-(pct/100)*427;
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('rlbl').textContent=`${doneCount} of ${habits.length}${pct===100?' 🔥':''}`;
+  const groups=['Morning','Afternoon','Evening','Anytime'];
+  const container=document.getElementById('hgroups');
+  container.innerHTML='';
+  groups.forEach(g=>{
+    const gh=habits.filter(h=>h.time===g);
+    if(!gh.length)return;
+    const div=document.createElement('div');
+    div.className='hgroup';
+    const cls=g.toLowerCase();
+    div.innerHTML=`<div class="hgroup-label"><div class="hgroup-dot ${cls}"></div><div class="hgroup-name">${g}</div><div class="hgroup-count">${gh.filter(h=>done(h.id,t)).length}/${gh.length}</div></div>`+gh.map(h=>buildRow(h,t)).join('');
     container.appendChild(div);
   });
 }
 
-function buildHabCard(h, t) {
-  const done = isDone(h.id, t);
-  const str = streak(h.id);
-  const days = last7();
-  const dots = days.map((d, i) => {
-    const on = isDone(h.id, d);
-    const isToday = d === t;
-    return `<div class="wdot${on ? (isToday ? ' today' : ' on') : ''}"></div>`;
+function buildRow(h,t){
+  const d=done(h.id,t),s=strk(h.id);
+  const days=last7();
+  const dots=days.map((day,i)=>{
+    const on=done(h.id,day),isToday=day===t;
+    return`<div class="wd${on?(isToday?' today on':' on'):''}"></div>`;
   }).join('');
-  return `
-    <div class="hab-card${done ? ' done' : ''}" id="hc-${h.id}" onclick="tapHabit(${h.id}, event)">
-      <div class="hchk${done ? ' done' : ''}" id="chk-${h.id}">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  return`<div class="hrow${d?' done':''}" id="hr${h.id}" onclick="tapH(${h.id},event)">
+    <div class="hring${d?' done':''}" id="hring${h.id}">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <circle class="hring-track" cx="16" cy="16" r="14"/>
+        <circle class="hring-fill" cx="16" cy="16" r="14"/>
+      </svg>
+      <div class="hring-check">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3.5 3.5 5.5-6" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="hinfo">
-        <div class="hname${done ? ' done' : ''}">${h.name}</div>
-        <div class="hmeta">
-          ${str > 0 ? `<div class="hstreak"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>${str}</div>` : ''}
-          <div class="hweek">${dots}</div>
-        </div>
+    </div>
+    <div class="hcontent">
+      <div class="hname${d?' done':''}">${h.name}</div>
+      <div class="hmeta">
+        ${s>0?`<div class="hstreak"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>${s}</div>`:''}
+        <div class="hweek">${dots}</div>
       </div>
-      <button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;" onclick="delHabit(${h.id},event)">×</button>
-    </div>`;
+    </div>
+    <button class="hdel" onclick="delH(${h.id},event)">×</button>
+  </div>`;
 }
 
-function tapHabit(id, e) {
-  const t = todayStr();
-  const idx = completions.findIndex(c => c.habitId === id && c.date === t);
-  const wasDone = idx >= 0;
-  if (wasDone) completions.splice(idx, 1);
-  else {
-    completions.push({ habitId: id, date: t });
-    // burst animation
-    const card = document.getElementById('hc-' + id);
-    if (card) {
-      const burst = document.createElement('div');
-      burst.className = 'burst';
-      card.appendChild(burst);
-      setTimeout(() => burst.remove(), 600);
-    }
+function tapH(id,e){
+  const t=today(),idx=comps.findIndex(c=>c.id===id&&c.d===t);
+  const wasDone=idx>=0;
+  if(wasDone)comps.splice(idx,1);
+  else{
+    comps.push({id,d:t});
+    const card=document.getElementById('hr'+id);
+    if(card){const b=document.createElement('div');b.className='bst';card.appendChild(b);setTimeout(()=>b.remove(),600);}
   }
-  S.set('comp2', completions);
+  S.set('c3',comps);
   renderToday();
 }
+function delH(id,e){e.stopPropagation();habits=habits.filter(h=>h.id!==id);comps=comps.filter(c=>c.id!==id);S.set('h3',habits);S.set('c3',comps);renderToday();}
 
-function delHabit(id, e) {
-  e.stopPropagation();
-  habits = habits.filter(h => h.id !== id);
-  completions = completions.filter(c => c.habitId !== id);
-  S.set('hab2', habits);
-  S.set('comp2', completions);
-  renderToday();
-}
-
-// ─── INSIGHTS ─────────────────────────────────────────────────────────────────
-function renderInsights() {
-  // Stats
-  let bestStreak = 0;
-  habits.forEach(h => { const s = streak(h.id); if (s > bestStreak) bestStreak = s; });
-  document.getElementById('is-streak').textContent = bestStreak;
-  const days7 = last7();
-  const weekRate = habits.length ? Math.round(
-    (days7.reduce((a, d) => a + habits.filter(h => isDone(h.id, d)).length, 0) / (habits.length * 7)) * 100
-  ) : 0;
-  document.getElementById('is-rate').textContent = weekRate + '%';
-  document.getElementById('is-total').textContent = completions.length;
-
-  // Heatmap — 13 weeks × 7 days = 91 days
-  const dates = last91();
-  const hmGrid = document.getElementById('hm-grid');
-  hmGrid.innerHTML = '';
-  dates.forEach(d => {
-    const count = habits.filter(h => isDone(h.id, d)).length;
-    const max = habits.length || 1;
-    const ratio = count / max;
-    let cls = 'hm-cell';
-    if (ratio > 0.75) cls += ' l4';
-    else if (ratio > 0.5) cls += ' l3';
-    else if (ratio > 0.25) cls += ' l2';
-    else if (ratio > 0) cls += ' l1';
-    const cell = document.createElement('div');
-    cell.className = cls;
-    cell.title = d + ' — ' + count + '/' + max;
-    hmGrid.appendChild(cell);
+// Insights
+function renderInsights(){
+  let best=0;habits.forEach(h=>{const s=strk(h.id);if(s>best)best=s;});
+  document.getElementById('is1').textContent=best;
+  const d7=last7();
+  const wr=habits.length?Math.round((d7.reduce((a,d)=>a+habits.filter(h=>done(h.id,d)).length,0)/(habits.length*7))*100):0;
+  document.getElementById('is2').textContent=wr+'%';
+  document.getElementById('is3').textContent=comps.length;
+  const dates=last91(),grid=document.getElementById('hmgrid');grid.innerHTML='';
+  dates.forEach(d=>{
+    const cnt=habits.filter(h=>done(h.id,d)).length,mx=habits.length||1,r=cnt/mx;
+    const cell=document.createElement('div');
+    cell.className='hmc'+(r>0.75?' l4':r>0.5?' l3':r>0.25?' l2':r>0?' l1':'');
+    grid.appendChild(cell);
   });
-
-  // Per-habit list
-  const hiList = document.getElementById('hi-list');
-  if (!habits.length) { hiList.innerHTML = '<p style="font-size:13px;color:var(--text2)">No habits yet.</p>'; return; }
-  hiList.innerHTML = habits.map(h => {
-    const done7 = days7.filter(d => isDone(h.id, d)).length;
-    const pct = Math.round((done7 / 7) * 100);
-    return `<div class="hi-row">
-      <div class="hi-dot"></div>
-      <div class="hi-name">${h.name}</div>
-      <div class="hi-bar-wrap"><div class="hi-bar" style="width:${pct}%"></div></div>
-      <div class="hi-pct">${pct}%</div>
-    </div>`;
-  }).join('');
-
-  // Bar chart
-  const data = days7.map(d => habits.filter(h => isDone(h.id, d)).length);
-  const ctx = document.getElementById('ch-insights');
-  if (!ctx) return;
-  if (cInsights) cInsights.destroy();
-  cInsights = new Chart(ctx, {
-    type: 'bar',
-    data: { labels: days7.map(dayLbl), datasets: [{ data, backgroundColor: 'rgba(52,211,153,0.5)', hoverBackgroundColor: '#34d399', borderRadius: 5, borderSkipped: false }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44445a', font: { size: 10 }, stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#44445a', font: { size: 10 }, autoSkip: false } } } }
-  });
+  const rl=document.getElementById('hratelist');
+  if(!habits.length){rl.innerHTML='<p style="font-size:13px;color:var(--txt2)">Add habits to see stats.</p>';return;}
+  rl.innerHTML=habits.map(h=>{const n=d7.filter(d=>done(h.id,d)).length,p=Math.round((n/7)*100);return`<div class="hrate"><div class="hrate-name">${h.name}</div><div class="hrate-bar"><div class="hrate-fill" style="width:${p}%"></div></div><div class="hrate-pct">${p}%</div></div>`;}).join('');
+  const data=d7.map(d=>habits.filter(h=>done(h.id,d)).length);
+  const ctx=document.getElementById('chins');if(!ctx)return;
+  if(cIns)cIns.destroy();
+  cIns=new Chart(ctx,{type:'bar',data:{labels:d7.map(dlbl),datasets:[{data,backgroundColor:'rgba(0,255,136,0.45)',hoverBackgroundColor:'#00ff88',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6b88',font:{size:10}},stepSize:1},x:{grid:{display:false},ticks:{color:'#6b6b88',font:{size:10},autoSkip:false}}}}});
 }
 
-// ─── FOCUS TIMER ─────────────────────────────────────────────────────────────
-function updateTimerDisplay() {
-  const m = Math.floor(timerSecs / 60), s = timerSecs % 60;
-  document.getElementById('t-display').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  const circ = 427, offset = circ - ((timerTotal - timerSecs) / timerTotal) * circ;
-  document.getElementById('t-ring').style.strokeDashoffset = offset;
-}
-function setPreset(v) {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; timerRunning = false; }
-  timerSecs = parseInt(v) * 60; timerTotal = timerSecs; timerElapsed = 0;
-  document.getElementById('t-start').textContent = 'Start';
-  document.getElementById('t-log').style.display = 'none';
-  document.getElementById('t-status').textContent = 'READY';
-  updateTimerDisplay();
-}
-function toggleTimer() {
-  if (timerRunning) {
-    clearInterval(timerInterval); timerRunning = false;
-    document.getElementById('t-start').textContent = 'Resume';
-    document.getElementById('t-status').textContent = 'PAUSED';
-    if (timerElapsed > 0) document.getElementById('t-log').style.display = '';
-  } else {
-    timerRunning = true;
-    document.getElementById('t-start').textContent = 'Pause';
-    document.getElementById('t-log').style.display = 'none';
-    document.getElementById('t-status').textContent = 'IN SESSION';
-    timerInterval = setInterval(() => {
-      timerSecs--; timerElapsed++;
-      updateTimerDisplay();
-      if (timerSecs <= 0) {
-        clearInterval(timerInterval); timerRunning = false;
-        document.getElementById('t-start').textContent = 'Start';
-        document.getElementById('t-log').style.display = '';
-        document.getElementById('t-status').textContent = 'COMPLETE';
-      }
-    }, 1000);
-  }
-}
-function resetTimer() {
-  clearInterval(timerInterval); timerRunning = false; timerElapsed = 0;
-  const v = document.getElementById('timer-preset').value;
-  timerSecs = parseInt(v) * 60; timerTotal = timerSecs;
-  document.getElementById('t-start').textContent = 'Start';
-  document.getElementById('t-log').style.display = 'none';
-  document.getElementById('t-status').textContent = 'READY';
-  updateTimerDisplay();
-}
-function logSession() {
-  const mins = Math.round(timerElapsed / 60); if (mins < 1) return;
-  const sel = document.getElementById('timer-preset');
-  focusSessions.push({ id: Date.now(), date: todayStr(), duration: mins, label: sel.options[sel.selectedIndex].text.split(' — ')[0] });
-  S.set('fs', focusSessions);
-  resetTimer(); renderSessList();
-}
-function renderSessList() {
-  const el = document.getElementById('sess-list');
-  const r = [...focusSessions].sort((a, b) => b.id - a.id).slice(0, 6);
-  if (!r.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text2)">No sessions yet.</p>'; return; }
-  el.innerHTML = r.map(s => `<div class="sess-item">
-    <div class="sess-dot"></div>
-    <span class="sess-name">${s.label}</span>
-    <span style="font-size:11px;color:var(--text2);font-family:'DM Mono',monospace">${s.date === todayStr() ? 'today' : s.date}</span>
-    <span class="sess-badge">${s.duration}m</span>
-    <button class="delx" onclick="delSess(${s.id})">×</button>
-  </div>`).join('');
-}
-function delSess(id) { focusSessions = focusSessions.filter(s => s.id !== id); S.set('fs', focusSessions); renderSessList(); }
+// Focus
+function updTimer(){const m=Math.floor(tsecs/60),s=tsecs%60;document.getElementById('tdis').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;document.getElementById('trf').style.strokeDashoffset=427-((ttotal-tsecs)/ttotal)*427;}
+function setPreset(v){if(tint){clearInterval(tint);tint=null;trun=false;}tsecs=parseInt(v)*60;ttotal=tsecs;telap=0;document.getElementById('tstart').textContent='Start';document.getElementById('tlog').style.display='none';document.getElementById('tst').textContent='READY';updTimer();}
+function toggleTimer(){if(trun){clearInterval(tint);trun=false;document.getElementById('tstart').textContent='Resume';document.getElementById('tst').textContent='PAUSED';if(telap>0)document.getElementById('tlog').style.display='';}else{trun=true;document.getElementById('tstart').textContent='Pause';document.getElementById('tlog').style.display='none';document.getElementById('tst').textContent='IN SESSION';tint=setInterval(()=>{tsecs--;telap++;updTimer();if(tsecs<=0){clearInterval(tint);trun=false;document.getElementById('tstart').textContent='Start';document.getElementById('tlog').style.display='';document.getElementById('tst').textContent='COMPLETE';}},1000);}}
+function resetTimer(){clearInterval(tint);trun=false;telap=0;const v=document.getElementById('tpreset').value;tsecs=parseInt(v)*60;ttotal=tsecs;document.getElementById('tstart').textContent='Start';document.getElementById('tlog').style.display='none';document.getElementById('tst').textContent='READY';updTimer();}
+function logSess(){const m=Math.round(telap/60);if(m<1)return;const sel=document.getElementById('tpreset');fsess.push({id:Date.now(),date:today(),dur:m,lbl:sel.options[sel.selectedIndex].text.split(' — ')[0]});S.set('fs',fsess);resetTimer();renderSess();}
+function renderSess(){const el=document.getElementById('sesslist');const r=[...fsess].sort((a,b)=>b.id-a.id).slice(0,6);if(!r.length){el.innerHTML='<p style="font-size:13px;color:var(--txt2)">No sessions yet.</p>';return;}el.innerHTML=r.map(s=>`<div class="srow"><div class="sdot"></div><span class="sname">${s.lbl}</span><span class="sdate">${s.date===today()?'today':s.date}</span><span class="sbadge">${s.dur}m</span><button class="sdel" onclick="delSess(${s.id})">×</button></div>`).join('');}
+function delSess(id){fsess=fsess.filter(s=>s.id!==id);S.set('fs',fsess);renderSess();}
 
-// ─── HEALTH ───────────────────────────────────────────────────────────────────
-function prefillHealth() {
-  const log = healthLogs.find(l => l.date === todayStr()); if (!log) return;
-  if (log.sleep) document.getElementById('h-sleep').value = log.sleep;
-  if (log.water) document.getElementById('h-water').value = log.water;
-  if (log.steps) document.getElementById('h-steps').value = log.steps;
-}
-function logHealth() {
-  const sleep = parseFloat(document.getElementById('h-sleep').value) || null;
-  const water = parseInt(document.getElementById('h-water').value) || null;
-  const steps = parseInt(document.getElementById('h-steps').value) || null;
-  if (!sleep && !water && !steps) return;
-  const t = todayStr(), idx = healthLogs.findIndex(l => l.date === t);
-  const entry = { date: t, sleep, water, steps };
-  if (idx >= 0) healthLogs[idx] = entry; else healthLogs.push(entry);
-  S.set('hl', healthLogs);
-  renderHealthCharts();
-  const btn = document.getElementById('health-btn');
-  btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save log', 1500);
-}
-function renderHealthCharts() {
-  const days = last7(), labels = days.map(dayLbl);
-  const sd = days.map(d => { const l = healthLogs.find(x => x.date === d); return l?.sleep ?? null; });
-  const wd = days.map(d => { const l = healthLogs.find(x => x.date === d); return l?.water ?? null; });
-  const spd = days.map(d => { const l = healthLogs.find(x => x.date === d); return l?.steps ?? null; });
-  const gStyle = { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44445a', font: { size: 10 } } };
-  const xStyle = { grid: { display: false }, ticks: { color: '#44445a', font: { size: 10 }, autoSkip: false } };
-  const ctx1 = document.getElementById('ch-h1');
-  if (ctx1) { if (cH1) cH1.destroy(); cH1 = new Chart(ctx1, { type: 'line', data: { labels, datasets: [{ data: sd, borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.08)', tension: .4, yAxisID: 'y1', spanGaps: true, pointRadius: 4, pointBackgroundColor: '#a78bfa' }, { data: wd, borderColor: '#22d3ee', backgroundColor: 'rgba(34,211,238,0.08)', tension: .4, yAxisID: 'y2', spanGaps: true, pointRadius: 4, pointBackgroundColor: '#22d3ee' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y1: { beginAtZero: true, position: 'left', ...gStyle }, y2: { beginAtZero: true, position: 'right', grid: { display: false }, ticks: { color: '#44445a', font: { size: 10 } } }, x: xStyle } } }); }
-  const ctx2 = document.getElementById('ch-h2');
-  if (ctx2) { if (cH2) cH2.destroy(); cH2 = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ data: spd, backgroundColor: 'rgba(245,158,11,0.5)', hoverBackgroundColor: '#f59e0b', borderRadius: 5, borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ...gStyle, beginAtZero: true, ticks: { ...gStyle.ticks, callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v) } }, x: xStyle } } }); }
+// Health
+function prefillH(){const l=hlogs.find(l=>l.date===today());if(!l)return;if(l.sleep)document.getElementById('hs').value=l.sleep;if(l.water)document.getElementById('hw').value=l.water;if(l.steps)document.getElementById('hst').value=l.steps;}
+function logHealth(){const sleep=parseFloat(document.getElementById('hs').value)||null,water=parseInt(document.getElementById('hw').value)||null,steps=parseInt(document.getElementById('hst').value)||null;if(!sleep&&!water&&!steps)return;const t=today(),idx=hlogs.findIndex(l=>l.date===t),e={date:t,sleep,water,steps};if(idx>=0)hlogs[idx]=e;else hlogs.push(e);S.set('hl',hlogs);renderHCharts();const b=document.getElementById('hlbtn');b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save log',1500);}
+function renderHCharts(){
+  const d7=last7(),lb=d7.map(dlbl),sd=d7.map(d=>{const l=hlogs.find(x=>x.date===d);return l?.sleep??null;}),wd=d7.map(d=>{const l=hlogs.find(x=>x.date===d);return l?.water??null;}),spd=d7.map(d=>{const l=hlogs.find(x=>x.date===d);return l?.steps??null;});
+  const gs={grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6b88',font:{size:10}}},xs={grid:{display:false},ticks:{color:'#6b6b88',font:{size:10},autoSkip:false}};
+  const c1=document.getElementById('chh1');if(c1){if(cH1)cH1.destroy();cH1=new Chart(c1,{type:'line',data:{labels:lb,datasets:[{data:sd,borderColor:'#9b6dff',backgroundColor:'rgba(155,109,255,0.08)',tension:.4,yAxisID:'y1',spanGaps:true,pointRadius:4,pointBackgroundColor:'#9b6dff'},{data:wd,borderColor:'#00cfff',backgroundColor:'rgba(0,207,255,0.08)',tension:.4,yAxisID:'y2',spanGaps:true,pointRadius:4,pointBackgroundColor:'#00cfff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y1:{beginAtZero:true,position:'left',...gs},y2:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#6b6b88',font:{size:10}}},x:xs}}});}
+  const c2=document.getElementById('chh2');if(c2){if(cH2)cH2.destroy();cH2=new Chart(c2,{type:'bar',data:{labels:lb,datasets:[{data:spd,backgroundColor:'rgba(255,204,0,0.45)',hoverBackgroundColor:'#ffcc00',borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{...gs,beginAtZero:true,ticks:{...gs.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'k':String(v)}},x:xs}}});}
 }
 
-// ─── CHECKLIST ────────────────────────────────────────────────────────────────
-const DAYS=[{name:"Monday",sub:"High-Intensity Upper Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs).","Buy-in: Visualize today's upper body session.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Physical and mental warm-up starts now.","No passive scrolling. Switch into training mode.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Upper Body Strength",tag:"tg",items:["Warm-up: 5–10 min dynamic shoulder & chest mobility.","Barbell Bench Press — 4×4–6.","Barbell Bent-Over Row — 4×4–6.","Overhead Press — 3×5–6.","Weighted Pull-Ups / Lat Pulldown — 3×5–6.","Incline Dumbbell Press — 3×6–8.","Cool-down: 3 min chest and lat stretch."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag.","Set alarm. No stimulating content after 9:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Tuesday",sub:"High-Intensity Lower Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + complex carbs).","Buy-in: Visualize the squat — depth, drive, posture.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Activate mindset for heavy lower session.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Lower Body Strength",tag:"tg",items:["Warm-up: 5–10 min hip, glute & hamstring activation.","Barbell Back Squat — 4×4–6.","Romanian Deadlift — 4×4–6.","Leg Press — 3×6–8.","Nordic Curl / Lying Leg Curl — 3×6–8.","Walking Lunges — 3×8 each leg.","Cool-down: 3 min hip flexor and quad stretch."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag.","Set alarm."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Wednesday",sub:"High-Intensity Push Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + moderate carbs).","Buy-in: Visualize push session — full range, controlled reps."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Hypertrophy focus: controlled reps, full range.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Push Hypertrophy",tag:"tg",items:["Warm-up: shoulder circles, band pull-aparts.","Incline Barbell/Dumbbell Press — 4×8–12.","Seated Dumbbell Shoulder Press — 3×10–12.","Cable Chest Fly / Pec Deck — 3×12–15.","Lateral Raises — 4×12–15.","Tricep Rope Pushdown — 3×12–15.","Overhead Tricep Extension — 3×10–12."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack tomorrow's bag (no gym kit — recovery day)."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Thursday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Eat a nourishing breakfast — whole foods, recovery day.","Pack bag (no gym kit today). Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat recovery-focused lunch (anti-inflammatory, hydration).","Buy-in: Identify soreness areas — plan today's mobility focus."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — easy walk",tag:"tr",items:["Walk at a restorative, easy pace. Arrive by 3:50 PM."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck rolls.","5 min: Hip flexor stretch (couch stretch / 90-90).","5 min: Thoracic spine mobility (foam roller / cat-cow).","5 min: Hamstring and calf stretch.","5 min: Shoulder and chest opener.","5 min: Glute and piriformis stretch (figure-4)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review this week's Calculus — identify weak points.","Complete current Physics problem sets.","Review this week's Physics — identify weak points."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack Pull day gym kit, laptop, notebooks."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Friday",sub:"High-Intensity Pull Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Pull day. Hydrate immediately.","Eat a protein-forward breakfast.","Pack gym bag and academic materials. Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch.","Buy-in: Visualize pull session — lat engagement, peak contraction."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Friday — finish the week with intent.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Pull Hypertrophy",tag:"tg",items:["Warm-up: scapular activation, band pull-aparts.","Pull-Ups / Assisted Pull-Ups — 4×8–12.","Cable Row / Seated Row — 4×10–12.","Single-Arm Dumbbell Row — 3×10–12 each side.","Face Pulls — 4×15.","Barbell / Dumbbell Curl — 3×12–15.","Hammer Curl — 3×12–15."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Begin consolidating this week's Calculus notes.","Complete current Physics problem sets.","Begin consolidating this week's Physics notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack Saturday bag: Legs gym kit, weekend study materials."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Saturday",sub:"High-Intensity Legs Hypertrophy",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds on weekends.","Hydrate. High-carb, high-protein breakfast — big leg session ahead."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — solidify any gaps.","Broad review of the week's Physics — solidify any gaps.","Tackle outstanding problem sets or projects."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for the week ahead if needed.","Handle life admin: laundry, groceries, errands.","Eat a performance lunch by 2:30 PM."]},{t:"3:00–3:50 PM",ti:"Transition — travel to gym",tag:"tr",items:["Depart at 3:00 PM — same as every weekday.","The habit lock: 3:55 PM is gym time, every single day."]},{t:"3:55–5:00 PM",ti:"Legs Hypertrophy",tag:"tg",items:["Warm-up: hip circles, glute activation, bodyweight squats.","Leg Press — 4×10–15.","Romanian Deadlift — 4×10–12.","Hack Squat / Goblet Squat — 3×12–15.","Lying Leg Curl — 3×12–15.","Leg Extension — 3×15.","Calf Raise — 4×15–20."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Review upcoming Calculus material.","Review upcoming Physics material.","Plan the week's academic priorities.","Wind down intentionally after 8:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Another strong week begins in 9 hours."]}]},{name:"Sunday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. Hydrate. Whole foods breakfast."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — resolve unresolved concepts.","Broad review of the week's Physics — resolve unresolved concepts.","Complete any remaining assignments or problem sets."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for Mon–Wed window.","Handle any remaining life admin.","Enjoy a genuine rest activity — CNS needs low stimulation."]},{t:"3:00–3:50 PM",ti:"Transition — travel to recovery space",tag:"tr",items:["Depart at 3:00 PM. Walk at a relaxed pace.","Arrive and prepare your mat and space."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck and shoulder rolls.","5 min: Quad and hip flexor stretch.","5 min: Thoracic spine opener (foam roller).","5 min: Hamstring and calf stretch.","5 min: Glute and piriformis stretch.","5 min: Full spinal decompress — child's pose, supine twist."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Finalize the week-ahead plan. Lock in Monday's priorities.","One brief honest reflection: what worked, what didn't?","Ensure Monday's bag is packed. Begin wind-down at 8:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. The system resets. Monday is ready."]}]}];
-const TAG_MAP = { tg: 'Gym', ta: 'Academic', tf: 'Deep Work', tr: 'Routine', tc: 'Recovery' };
+// Checklist
+const DAYS=[{name:"Monday",sub:"High-Intensity Upper Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs).","Buy-in: Visualize today's upper body session.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Physical and mental warm-up starts now.","No passive scrolling. Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Upper Body Strength",tag:"tg",items:["Warm-up: 5–10 min dynamic shoulder & chest mobility.","Barbell Bench Press — 4×4–6.","Barbell Bent-Over Row — 4×4–6.","Overhead Press — 3×5–6.","Weighted Pull-Ups / Lat Pulldown — 3×5–6.","Incline Dumbbell Press — 3×6–8.","Cool-down: 3 min chest and lat stretch."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack tomorrow's bag. Set alarm."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Tuesday",sub:"High-Intensity Lower Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Eat a protein-forward breakfast.","Pack gym bag and academic materials. Commute."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + complex carbs).","Buy-in: Visualize the squat — depth, drive, posture."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Activate mindset for heavy lower session.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Lower Body Strength",tag:"tg",items:["Warm-up: hip, glute & hamstring activation.","Barbell Back Squat — 4×4–6.","Romanian Deadlift — 4×4–6.","Leg Press — 3×6–8.","Nordic Curl / Lying Leg Curl — 3×6–8.","Walking Lunges — 3×8 each leg.","Cool-down: hip flexor and quad stretch."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack tomorrow's bag. Set alarm."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Wednesday",sub:"High-Intensity Push Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Eat a protein-forward breakfast.","Pack gym bag and academic materials. Commute."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch.","Buy-in: Visualize push session — full range, controlled reps."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Push Hypertrophy",tag:"tg",items:["Warm-up: shoulder circles, band pull-aparts.","Incline Barbell/Dumbbell Press — 4×8–12.","Seated Dumbbell Shoulder Press — 3×10–12.","Cable Chest Fly / Pec Deck — 3×12–15.","Lateral Raises — 4×12–15.","Tricep Rope Pushdown — 3×12–15.","Overhead Tricep Extension — 3×10–12."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes."]},{t:"9:00–10:00 PM",ti:"Night routine",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack tomorrow's bag (no gym kit — recovery day)."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Thursday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate. Whole foods breakfast.","Pack bag (no gym kit today). Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat recovery-focused lunch (anti-inflammatory, hydration).","Buy-in: Identify soreness areas — plan mobility focus."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — easy walk",tag:"tr",items:["Walk at a restorative pace. Arrive by 3:50 PM."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck rolls.","5 min: Hip flexor stretch (couch stretch / 90-90).","5 min: Thoracic spine mobility (foam roller).","5 min: Hamstring and calf stretch.","5 min: Shoulder and chest opener.","5 min: Glute and piriformis stretch (figure-4)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review this week's Calculus — identify weak points.","Complete current Physics problem sets.","Review this week's Physics — identify weak points."]},{t:"9:00–10:00 PM",ti:"Night routine",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack Pull day gym kit, laptop, notebooks."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Friday",sub:"High-Intensity Pull Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Pull day. Hydrate immediately.","Eat a protein-forward breakfast.","Pack gym bag and academic materials. Commute."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch.","Buy-in: Visualize pull session — lat engagement, peak contraction."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Friday — finish the week with intent.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Pull Hypertrophy",tag:"tg",items:["Warm-up: scapular activation, band pull-aparts.","Pull-Ups / Assisted Pull-Ups — 4×8–12.","Cable Row / Seated Row — 4×10–12.","Single-Arm Dumbbell Row — 3×10–12 each side.","Face Pulls — 4×15.","Barbell / Dumbbell Curl — 3×12–15.","Hammer Curl — 3×12–15."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Begin consolidating this week's Calculus notes.","Complete current Physics problem sets.","Begin consolidating this week's Physics notes."]},{t:"9:00–10:00 PM",ti:"Night routine",tag:"tr",items:["Wind down. Complete hygiene routine.","Pack Saturday bag: Legs gym kit, study materials."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Saturday",sub:"High-Intensity Legs Hypertrophy",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds on weekends.","Hydrate. High-carb, high-protein breakfast."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — solidify any gaps.","Broad review of the week's Physics — solidify any gaps.","Tackle outstanding problem sets or projects."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for the week ahead if needed.","Handle life admin: laundry, groceries, errands.","Eat a performance lunch by 2:30 PM."]},{t:"3:00–3:50 PM",ti:"Transition — travel to gym",tag:"tr",items:["Depart at 3:00 PM. The habit lock: 3:55 PM is gym time."]},{t:"3:55–5:00 PM",ti:"Legs Hypertrophy",tag:"tg",items:["Warm-up: hip circles, glute activation, bodyweight squats.","Leg Press — 4×10–15.","Romanian Deadlift — 4×10–12.","Hack Squat / Goblet Squat — 3×12–15.","Lying Leg Curl — 3×12–15.","Leg Extension — 3×15.","Calf Raise — 4×15–20."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Review upcoming Calculus material.","Review upcoming Physics material.","Plan the week's academic priorities."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Another strong week begins in 9 hours."]}]},{name:"Sunday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. Hydrate. Whole foods breakfast."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — resolve unresolved concepts.","Broad review of the week's Physics — resolve unresolved concepts.","Complete any remaining assignments or problem sets."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for Mon–Wed window.","Handle any remaining life admin.","Enjoy a genuine rest activity."]},{t:"3:00–3:50 PM",ti:"Transition — recovery space",tag:"tr",items:["Depart at 3:00 PM. Walk at a relaxed pace.","Arrive and prepare your mat and space."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck and shoulder rolls.","5 min: Quad and hip flexor stretch.","5 min: Thoracic spine opener (foam roller).","5 min: Hamstring and calf stretch.","5 min: Glute and piriformis stretch.","5 min: Full spinal decompress — child's pose, supine twist."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Finalize the week-ahead plan. Lock in Monday's priorities.","One brief honest reflection: what worked, what didn't?","Ensure Monday's bag is packed. Begin wind-down at 8:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. The system resets. Monday is ready."]}]}];
+const TM={tg:'Gym',ta:'Academic',tf:'Deep Work',tr:'Routine',tc:'Recovery'};
 
-function buildDayNav() {
-  const nav = document.getElementById('days-nav');
-  DAYS.forEach((d, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'dchip' + (i === activeDay ? ' active' : '');
-    btn.textContent = d.name.slice(0, 3).toUpperCase();
-    btn.onclick = () => { activeDay = i; renderChecklist(); };
-    nav.appendChild(btn);
-  });
-}
+function buildDayNav(){const nav=document.getElementById('dnav');DAYS.forEach((d,i)=>{const btn=document.createElement('button');btn.className='dc'+(i===activeDay?' on':'');btn.textContent=d.name.slice(0,3).toUpperCase();btn.onclick=()=>{activeDay=i;renderCL();};nav.appendChild(btn);});}
+function renderCL(){document.querySelectorAll('.dc').forEach((b,i)=>b.classList.toggle('on',i===activeDay));const day=DAYS[activeDay];document.getElementById('dsub').textContent=day.sub;let html='';day.blocks.forEach((b,bi)=>{html+=`<div class="clblock"><div class="blkhdr"><span class="blkt">${b.t}</span><span class="blkti">${b.ti}</span><span class="blktag ${b.tag}">${TM[b.tag]}</span></div><div class="blkitems">`;b.items.forEach((item,ii)=>{const key=`cl_${activeDay}_${bi}_${ii}`,chk=clst[key]||false;html+=`<div class="crow${chk?' done':''}" id="cr${key}"><input type="checkbox" id="${key}" ${chk?'checked':''} onchange="tickCL(this,'${key}')"><label for="${key}">${item}</label></div>`;});html+='</div></div>';});document.getElementById('clblocks').innerHTML=html;updCLprog();}
+function tickCL(el,key){clst[key]=el.checked;S.set('cl',clst);const r=document.getElementById('cr'+key);el.checked?r.classList.add('done'):r.classList.remove('done');updCLprog();}
+function updCLprog(){const day=DAYS[activeDay];let total=0,done=0;day.blocks.forEach((b,bi)=>b.items.forEach((_,ii)=>{const key=`cl_${activeDay}_${bi}_${ii}`;total++;if(clst[key])done++;}));const p=total?Math.round((done/total)*100):0;document.getElementById('pfill').style.width=p+'%';document.getElementById('ppct').textContent=p+'%';}
 
-function renderChecklist() {
-  document.querySelectorAll('.dchip').forEach((b, i) => b.classList.toggle('active', i === activeDay));
-  const day = DAYS[activeDay];
-  document.getElementById('cl-sub').textContent = day.sub;
-  let html = '';
-  day.blocks.forEach((b, bi) => {
-    html += `<div class="cl-block"><div class="blk-hdr"><span class="blk-time">${b.t}</span><span class="blk-title">${b.ti}</span><span class="blk-tag ${b.tag}">${TAG_MAP[b.tag]}</span></div><div class="blk-items">`;
-    b.items.forEach((item, ii) => {
-      const key = `cl_${activeDay}_${bi}_${ii}`, chk = clState[key] || false;
-      html += `<div class="chk-row${chk ? ' done' : ''}" id="cr-${key}"><input type="checkbox" id="${key}" ${chk ? 'checked' : ''} onchange="tickCL(this,'${key}')"><label for="${key}">${item}</label></div>`;
-    });
-    html += '</div></div>';
-  });
-  document.getElementById('cl-blocks').innerHTML = html;
-  updateCLProg();
-}
-
-function tickCL(el, key) {
-  clState[key] = el.checked; S.set('cl', clState);
-  const row = document.getElementById('cr-' + key);
-  el.checked ? row.classList.add('done') : row.classList.remove('done');
-  updateCLProg();
-}
-
-function updateCLProg() {
-  const day = DAYS[activeDay]; let total = 0, done = 0;
-  day.blocks.forEach((b, bi) => b.items.forEach((_, ii) => { const key = `cl_${activeDay}_${bi}_${ii}`; total++; if (clState[key]) done++; }));
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('cl-fill').style.width = pct + '%';
-  document.getElementById('cl-pct').textContent = pct + '%';
-}
-
-// ─── SW ───────────────────────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(() => {}); }
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-renderToday();
-updateTimerDisplay();
-renderSessList();
-buildDayNav();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+renderToday();updTimer();renderSess();buildDayNav();
 </script>
 </body>
 </html>
