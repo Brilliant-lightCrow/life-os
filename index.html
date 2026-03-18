@@ -3,209 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#050508">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Life OS">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <title>Life OS</title>
 <style>
-:root{--bg:#111;--surface:#1a1a1a;--card:#1e1e1e;--border:rgba(255,255,255,0.08);--text:#f0f0f0;--muted:#777;--hint:#444;--blue:#4f9cf9;--green:#4ade80;--amber:#f59e0b;--purple:#a78bfa;--red:#f87171;--r:12px;--rs:8px;}
+:root{--bg:#050508;--s1:#0c0c12;--s2:#12121a;--s3:#1a1a24;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#f0f0f8;--muted:#5a5a72;--hint:#2e2e3e;--cyan:#00e5ff;--cyan-dim:rgba(0,229,255,0.08);--coral:#ff6b6b;--coral-dim:rgba(255,107,107,0.08);--green:#39d98a;--green-dim:rgba(57,217,138,0.08);--amber:#ffb800;--amber-dim:rgba(255,184,0,0.08);--purple:#b794f4;--r:16px;--rs:10px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none;}
-body{display:flex;flex-direction:column;max-width:500px;margin:0 auto;position:relative;}
-
-/* ── Header ── */
-.hdr{padding:16px 16px 10px;padding-top:calc(16px + env(safe-area-inset-top));background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:0.5px solid var(--border);}
-.hdr-top{display:flex;justify-content:space-between;align-items:baseline;}
-.app-name{font-size:22px;font-weight:700;letter-spacing:-0.5px;background:linear-gradient(90deg,#4f9cf9,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hdr-date{font-size:12px;color:var(--muted);}
-.pills{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
-.pills::-webkit-scrollbar{display:none;}
-.pill{background:var(--surface);border-radius:20px;padding:4px 11px;font-size:12px;color:var(--muted);white-space:nowrap;flex-shrink:0;border:0.5px solid var(--border);}
-.pill b{font-weight:600;color:var(--text);margin-left:3px;}
-
-/* ── Main ── */
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none;}
+body{display:flex;flex-direction:column;max-width:500px;margin:0 auto;}
+::-webkit-scrollbar{width:0;height:0;}
+.hdr{padding:20px 20px 12px;padding-top:calc(20px + env(safe-area-inset-top));background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:0.5px solid var(--border);}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.app-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;color:var(--text);}
+.app-name span{color:var(--cyan);}
+.hdr-date{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;}
+.hdr-time{font-family:'DM Mono',monospace;font-size:14px;color:var(--muted);}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.met{background:var(--s2);border-radius:var(--rs);padding:10px 6px;border:0.5px solid var(--border);text-align:center;}
+.met-val{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);display:block;line-height:1;}
+.met-lbl{font-size:9px;color:var(--muted);margin-top:4px;display:block;letter-spacing:.03em;}
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.screen{display:none;padding:14px 14px 110px;}
+.screen{display:none;padding:16px 16px 110px;animation:fadeUp .2s ease;}
 .screen.active{display:block;}
-
-/* ── Bottom Nav ── */
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:rgba(17,17,17,0.95);backdrop-filter:blur(12px);border-top:0.5px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:50;}
-.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 0;border:none;background:none;color:var(--hint);font-size:10px;cursor:pointer;font-family:inherit;transition:color .15s;}
-.nbtn.active{color:var(--blue);}
-.nbtn svg{width:22px;height:22px;stroke-width:1.8;}
-
-/* ── Cards ── */
-.card{background:var(--card);border-radius:var(--r);padding:15px;margin-bottom:10px;border:0.5px solid var(--border);}
-.lbl{font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:11px;}
-
-/* ── Buttons ── */
-.btn{padding:12px 22px;border-radius:100px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s,transform .1s;}
-.btn:active{transform:scale(0.96);}
-.btn-p{background:var(--blue);color:#fff;}
-.btn-g{background:var(--surface);color:var(--text);border:0.5px solid var(--border);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:rgba(5,5,8,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:50;}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 0;border:none;background:none;color:var(--muted);font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .2s;letter-spacing:.02em;}
+.nbtn.active{color:var(--cyan);}
+.nbtn svg{width:20px;height:20px;stroke-width:1.7;transition:transform .2s;}
+.nbtn.active svg{transform:scale(1.1);}
+.sec{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.card{background:var(--s1);border-radius:var(--r);padding:18px;margin-bottom:12px;border:0.5px solid var(--border);position:relative;overflow:hidden;}
+.card.ac::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.card.ac-cyan::after{background:var(--cyan);}
+.card.ac-coral::after{background:var(--coral);}
+.card.ac-green::after{background:var(--green);}
+.btn{padding:14px 24px;border-radius:100px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn:active{transform:scale(0.95);}
+.btn-cyan{background:var(--cyan);color:#000;}
+.btn-ghost{background:var(--s3);color:var(--text);border:0.5px solid var(--border2);}
 .btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-select{background:var(--surface);color:var(--text);border:0.5px solid var(--border);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;width:100%;margin-bottom:10px;outline:none;}
-input[type=text],input[type=number]{background:var(--surface);color:var(--text);border:0.5px solid var(--border);border-radius:var(--rs);padding:10px 12px;font-size:14px;font-family:inherit;outline:none;width:100%;}
-input:focus{border-color:var(--blue);}
-
-/* ── Timer ── */
-.timer-big{font-size:76px;font-weight:200;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-3px;margin:10px 0 4px;color:var(--text);}
-.timer-status{font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px;}
-.sess-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;}
-.sess-row:last-child{border-bottom:none;}
-.sess-badge{background:rgba(79,156,249,.15);color:var(--blue);font-size:11px;padding:2px 8px;border-radius:10px;}
-.delx{background:none;border:none;color:var(--hint);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;transition:color .1s;}
-.delx:active{color:var(--red);}
-.empty{font-size:13px;color:var(--hint);padding:6px 0;}
-
-/* ── Chart ── */
+select{background:var(--s2);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--rs);padding:12px 14px;font-size:14px;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:14px;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5a72' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+input[type=text],input[type=number]{background:var(--s2);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--rs);padding:12px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;width:100%;transition:border-color .2s;}
+input:focus{border-color:var(--cyan);}
+::placeholder{color:var(--muted);}
+.timer-wrap{display:flex;justify-content:center;align-items:center;margin:8px 0 18px;position:relative;height:180px;}
+.timer-wrap svg{position:absolute;top:0;left:50%;transform:translateX(-50%);}
+.timer-inner{display:flex;flex-direction:column;align-items:center;z-index:1;}
+.timer-big{font-family:'Syne',sans-serif;font-size:62px;font-weight:800;letter-spacing:-3px;color:var(--text);line-height:1;}
+.timer-status{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:.1em;font-family:'DM Mono',monospace;}
+.ring-bg{fill:none;stroke:var(--s3);stroke-width:6;}
+.ring-fill{fill:none;stroke:var(--cyan);stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:90px 90px;transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.stat-card{background:var(--s2);border-radius:var(--rs);padding:14px;border:0.5px solid var(--border);}
+.stat-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:.02em;}
+.c-cyan .stat-val{color:var(--cyan);}
+.c-coral .stat-val{color:var(--coral);}
+.c-green .stat-val{color:var(--green);}
+.c-amber .stat-val{color:var(--amber);}
+.sess-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+.sess-item:last-child{border-bottom:none;}
+.sess-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+.sess-name{flex:1;font-size:13px;}
+.sess-date{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.sess-badge{background:var(--cyan-dim);color:var(--cyan);font-size:11px;padding:3px 9px;border-radius:100px;font-family:'DM Mono',monospace;border:0.5px solid rgba(0,229,255,0.15);}
+.delx{background:none;border:none;color:var(--hint);font-size:18px;cursor:pointer;padding:0 2px;transition:color .15s;}
+.delx:active{color:var(--coral);}
+.empty{font-size:13px;color:var(--muted);padding:4px 0;}
 .chart-wrap{position:relative;width:100%;}
-.chart-legend{display:flex;gap:14px;margin-bottom:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
-.lg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle;}
-
-/* ── Habits ── */
-.hab-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:0.5px solid var(--border);}
+.chart-legend{display:flex;gap:14px;margin-bottom:10px;font-size:11px;color:var(--muted);flex-wrap:wrap;}
+.lg-dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:middle;}
+.hab-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
 .hab-row:last-child{border-bottom:none;}
-.hab-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--hint);background:none;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.hab-chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--muted);background:none;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .hab-chk.done{background:var(--green);border-color:var(--green);}
 .hab-chk.done::after{content:'';width:5px;height:9px;border:2px solid #000;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);display:block;}
 .hab-name{flex:1;font-size:14px;}
-.hab-name.done{text-decoration:line-through;color:var(--hint);}
+.hab-name.done{text-decoration:line-through;color:var(--muted);}
 .hab-dots{display:flex;gap:3px;}
-.hdot{width:8px;height:8px;border-radius:2px;background:var(--hint);}
+.hdot{width:7px;height:7px;border-radius:2px;background:var(--hint);}
 .hdot.on{background:var(--green);}
-.add-row{display:flex;gap:8px;margin-top:12px;}
-.add-btn{background:var(--blue);color:#fff;border:none;border-radius:var(--rs);padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;}
-.add-btn:active{opacity:.75;}
-
-/* ── Health ── */
-.hgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
-.hfield{display:flex;flex-direction:column;gap:5px;}
-.hfield label{font-size:11px;color:var(--muted);}
-.save-btn{background:var(--blue);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:opacity .15s;}
-.save-btn:active{opacity:.75;}
-
-/* ── Checklist ── */
-.dscroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;margin-bottom:4px;}
+.add-row{display:flex;gap:8px;margin-top:14px;}
+.add-btn{background:var(--cyan);color:#000;border:none;border-radius:var(--rs);padding:12px 18px;font-size:18px;font-weight:700;cursor:pointer;transition:all .15s;}
+.add-btn:active{transform:scale(0.95);}
+.hgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.hfield{display:flex;flex-direction:column;gap:6px;}
+.hfield label{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+.save-btn{background:var(--cyan);color:#000;border:none;border-radius:var(--rs);padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;transition:all .15s;}
+.save-btn:active{transform:scale(0.98);}
+.dscroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;margin-bottom:4px;scrollbar-width:none;}
 .dscroll::-webkit-scrollbar{display:none;}
-.dchip{padding:7px 15px;border-radius:100px;border:0.5px solid var(--border);background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all .15s;}
-.dchip.active{background:var(--blue);color:#fff;border-color:transparent;}
-.prog-wrap{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.prog-track{flex:1;height:3px;background:var(--surface);border-radius:2px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s;}
-.prog-txt{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:30px;text-align:right;}
-.day-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
-.cl-block{margin-bottom:8px;}
-.blk-hdr{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--surface);border-radius:var(--rs) var(--rs) 0 0;border:0.5px solid var(--border);border-bottom:none;}
-.blk-time{font-size:10px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums;}
-.blk-title{font-size:12px;font-weight:500;flex:1;line-height:1.3;}
-.blk-tag{font-size:10px;padding:2px 7px;border-radius:10px;flex-shrink:0;}
-.tg{background:rgba(74,222,128,.12);color:#4ade80;}
-.ta{background:rgba(79,156,249,.12);color:#4f9cf9;}
-.tf{background:rgba(167,139,250,.12);color:#a78bfa;}
-.tr{background:rgba(119,119,119,.12);color:#777;}
-.tc{background:rgba(245,158,11,.12);color:#f59e0b;}
-.blk-items{border:0.5px solid var(--border);border-top:none;border-radius:0 0 var(--rs) var(--rs);overflow:hidden;}
-.chk-row{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:0.5px solid var(--border);cursor:pointer;}
-.chk-row:last-child{border-bottom:none;}
-.chk-row input{margin-top:2px;accent-color:var(--blue);flex-shrink:0;width:14px;height:14px;cursor:pointer;}
-.chk-row label{font-size:13px;line-height:1.5;cursor:pointer;}
-.chk-row.done label{text-decoration:line-through;color:var(--hint);}
+.dchip{padding:8px 16px;border-radius:100px;border:0.5px solid var(--border2);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;flex-shrink:0;transition:all .2s;letter-spacing:.04em;}
+.dchip.active{background:var(--cyan);color:#000;border-color:transparent;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.prog-track{flex:1;height:3px;background:var(--s3);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--cyan);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.prog-txt{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;min-width:32px;text-align:right;}
+.day-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.cl-block{margin-bottom:10px;border-radius:var(--r);overflow:hidden;border:0.5px solid var(--border);}
+.blk-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--s1);}
+.blk-time{font-size:10px;color:var(--muted);flex-shrink:0;font-family:'DM Mono',monospace;}
+.blk-title{font-size:12px;font-weight:500;flex:1;line-height:1.3;font-family:'Syne',sans-serif;}
+.blk-tag{font-size:10px;padding:3px 8px;border-radius:100px;flex-shrink:0;font-weight:600;letter-spacing:.04em;}
+.tg{background:var(--green-dim);color:var(--green);border:0.5px solid rgba(57,217,138,0.2);}
+.ta{background:var(--cyan-dim);color:var(--cyan);border:0.5px solid rgba(0,229,255,0.2);}
+.tf{background:rgba(183,148,244,0.08);color:var(--purple);border:0.5px solid rgba(183,148,244,0.2);}
+.tr{background:var(--s3);color:var(--muted);border:0.5px solid var(--border);}
+.tc{background:var(--amber-dim);color:var(--amber);border:0.5px solid rgba(255,184,0,0.2);}
+.blk-items{background:var(--bg);}
+.chk-row{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-top:0.5px solid var(--border);cursor:pointer;transition:background .15s;}
+.chk-row:active{background:var(--s1);}
+.chk-row input{margin-top:2px;accent-color:var(--cyan);flex-shrink:0;width:15px;height:15px;cursor:pointer;}
+.chk-row label{font-size:13px;line-height:1.5;cursor:pointer;color:var(--text);}
+.chk-row.done label{text-decoration:line-through;color:var(--muted);}
 </style>
 </head>
 <body>
-
 <header class="hdr">
   <div class="hdr-top">
-    <div class="app-name">Life OS</div>
-    <div class="hdr-date" id="hdr-date"></div>
+    <div>
+      <div class="app-name">LIFE<span>OS</span></div>
+      <div class="hdr-date" id="hdr-date"></div>
+    </div>
+    <div class="hdr-time" id="hdr-clock"></div>
   </div>
-  <div class="pills">
-    <div class="pill">Focus<b id="m-focus">0 min</b></div>
-    <div class="pill">Habits<b id="m-habits">0/0</b></div>
-    <div class="pill">Streak<b id="m-streak">0d</b></div>
-    <div class="pill">Sleep<b id="m-sleep">—</b></div>
+  <div class="metrics">
+    <div class="met"><span class="met-val" id="m-focus">0</span><span class="met-lbl">min focus</span></div>
+    <div class="met"><span class="met-val" id="m-habits">0/0</span><span class="met-lbl">habits</span></div>
+    <div class="met"><span class="met-val" id="m-streak">0</span><span class="met-lbl">streak</span></div>
+    <div class="met"><span class="met-val" id="m-sleep">—</span><span class="met-lbl">sleep</span></div>
   </div>
 </header>
 
 <main>
-  <!-- FOCUS -->
   <div class="screen active" id="sc-focus">
-    <div class="card">
+    <div class="card ac ac-cyan">
       <select id="timer-preset" onchange="setPreset(this.value)">
         <option value="25">Pomodoro — 25 min</option>
         <option value="50">Deep work — 50 min</option>
         <option value="15">Short sprint — 15 min</option>
         <option value="5">Break — 5 min</option>
       </select>
-      <div class="timer-big" id="timer-display">25:00</div>
-      <div class="timer-status" id="timer-status">Ready</div>
+      <div class="timer-wrap">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle class="ring-bg" cx="90" cy="90" r="78"/>
+          <circle class="ring-fill" id="ring" cx="90" cy="90" r="78" stroke-dasharray="490" stroke-dashoffset="490"/>
+        </svg>
+        <div class="timer-inner">
+          <div class="timer-big" id="timer-display">25:00</div>
+          <div class="timer-status" id="timer-status">READY</div>
+        </div>
+      </div>
       <div class="btn-row">
-        <button class="btn btn-p" id="btn-start" onclick="toggleTimer()">Start</button>
-        <button class="btn btn-g" onclick="resetTimer()">Reset</button>
-        <button class="btn btn-p" id="btn-log" style="display:none" onclick="logSession()">Save</button>
+        <button class="btn btn-cyan" id="btn-start" onclick="toggleTimer()">Start</button>
+        <button class="btn btn-ghost" onclick="resetTimer()">Reset</button>
+        <button class="btn btn-cyan" id="btn-log" style="display:none" onclick="logSession()">Save</button>
       </div>
     </div>
-    <div class="card">
-      <div class="lbl">Focus this week</div>
-      <div class="chart-wrap" style="height:155px"><canvas id="ch-focus"></canvas></div>
+    <div class="stat-row">
+      <div class="stat-card c-cyan"><div class="stat-val" id="s-today">0</div><div class="stat-lbl">min today</div></div>
+      <div class="stat-card c-coral"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">total sessions</div></div>
     </div>
-    <div class="card">
-      <div class="lbl">Recent sessions</div>
-      <div id="sess-list"><p class="empty">No sessions yet — start your first one!</p></div>
-    </div>
+    <div class="card"><div class="sec">This week</div><div class="chart-wrap" style="height:140px"><canvas id="ch-focus"></canvas></div></div>
+    <div class="card"><div class="sec">Recent</div><div id="sess-list"><p class="empty">No sessions yet.</p></div></div>
   </div>
 
-  <!-- CHECKLIST -->
   <div class="screen" id="sc-checklist">
     <div class="dscroll" id="days-nav"></div>
-    <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" id="cl-fill" style="width:0%"></div></div><span class="prog-txt" id="cl-pct">0%</span></div>
+    <div class="prog-row"><div class="prog-track"><div class="prog-fill" id="cl-fill" style="width:0%"></div></div><span class="prog-txt" id="cl-pct">0%</span></div>
     <div class="day-sub" id="cl-sub"></div>
     <div id="cl-blocks"></div>
   </div>
 
-  <!-- HABITS -->
   <div class="screen" id="sc-habits">
-    <div class="card">
-      <div class="lbl">Today</div>
+    <div class="stat-row">
+      <div class="stat-card c-green"><div class="stat-val" id="h-done">0</div><div class="stat-lbl">done today</div></div>
+      <div class="stat-card c-amber"><div class="stat-val" id="h-streak2">0</div><div class="stat-lbl">day streak</div></div>
+    </div>
+    <div class="card ac ac-green">
+      <div class="sec">Today</div>
       <div id="hab-list"><p class="empty">No habits yet — add one below!</p></div>
       <div class="add-row">
-        <input type="text" id="new-hab" placeholder="New habit..." onkeydown="if(event.key==='Enter')addHabit()">
-        <button class="add-btn" onclick="addHabit()">Add</button>
+        <input type="text" id="new-hab" placeholder="Add a new habit..." onkeydown="if(event.key==='Enter')addHabit()">
+        <button class="add-btn" onclick="addHabit()">+</button>
       </div>
     </div>
-    <div class="card">
-      <div class="lbl">Completion — 7 days</div>
-      <div class="chart-wrap" style="height:155px"><canvas id="ch-habits"></canvas></div>
-    </div>
+    <div class="card"><div class="sec">7-day completion</div><div class="chart-wrap" style="height:140px"><canvas id="ch-habits"></canvas></div></div>
   </div>
 
-  <!-- HEALTH -->
   <div class="screen" id="sc-health">
-    <div class="card">
-      <div class="lbl">Log today</div>
+    <div class="card ac ac-coral">
+      <div class="sec">Log today</div>
       <div class="hgrid">
         <div class="hfield"><label>Sleep (h)</label><input type="number" id="h-sleep" min="0" max="24" step="0.5" placeholder="7.5"></div>
         <div class="hfield"><label>Water (gl)</label><input type="number" id="h-water" min="0" max="30" placeholder="8"></div>
-        <div class="hfield"><label>Steps</label><input type="number" id="h-steps" min="0" placeholder="8000"></div>
+        <div class="hfield"><label>Steps</label><input type="number" id="h-steps" min="0" placeholder="8k"></div>
       </div>
       <button class="save-btn" id="health-btn" onclick="logHealth()">Save log</button>
     </div>
     <div class="card">
-      <div class="lbl">Sleep & water — 7 days</div>
-      <div class="chart-legend">
-        <span><span class="lg-dot" style="background:#a78bfa"></span>Sleep (h, left axis)</span>
-        <span><span class="lg-dot" style="background:#4ade80"></span>Water (glasses, right)</span>
-      </div>
-      <div class="chart-wrap" style="height:150px"><canvas id="ch-h1"></canvas></div>
+      <div class="sec">Sleep & water — 7 days</div>
+      <div class="chart-legend"><span><span class="lg-dot" style="background:#b794f4"></span>Sleep</span><span><span class="lg-dot" style="background:#00e5ff"></span>Water</span></div>
+      <div class="chart-wrap" style="height:140px"><canvas id="ch-h1"></canvas></div>
     </div>
-    <div class="card">
-      <div class="lbl">Steps — 7 days</div>
-      <div class="chart-wrap" style="height:150px"><canvas id="ch-h2"></canvas></div>
-    </div>
+    <div class="card"><div class="sec">Steps — 7 days</div><div class="chart-wrap" style="height:140px"><canvas id="ch-h2"></canvas></div></div>
   </div>
 </main>
 
@@ -226,215 +234,82 @@ input:focus{border-color:var(--blue);}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── Utils ────────────────────────────────────────────────────────────
 const todayStr=()=>new Date().toISOString().split('T')[0];
 const last7=()=>{const d=[];for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);d.push(dt.toISOString().split('T')[0]);}return d;};
 const dayLbl=s=>new Date(s+'T12:00:00').toLocaleDateString('en',{weekday:'short'});
-const ls={get:k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
-
-// ── State ────────────────────────────────────────────────────────────
-let focusSessions=ls.get('focus_sessions')||[];
-let habits=ls.get('habits')||[];
-let habitCompletions=ls.get('habit_completions')||[];
-let healthLogs=ls.get('health_logs')||[];
-let clState=ls.get('cl_state')||{};
-let timerSecs=25*60,timerRunning=false,timerInterval=null,timerElapsed=0;
+const ls={get:k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+let focusSessions=ls.get('fs')||[],habits=ls.get('hab')||[],habitCompletions=ls.get('hc')||[],healthLogs=ls.get('hl')||[],clState=ls.get('cl')||{};
+let timerSecs=1500,timerTotal=1500,timerRunning=false,timerInterval=null,timerElapsed=0;
 let activeDay=new Date().getDay()===0?6:new Date().getDay()-1;
 let cFocus=null,cHabits=null,cH1=null,cH2=null;
 
-// ── Header ───────────────────────────────────────────────────────────
-document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'});
+function updateClock(){const n=new Date();document.getElementById('hdr-clock').textContent=n.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});document.getElementById('hdr-date').textContent=n.toLocaleDateString('en',{weekday:'long',month:'short',day:'numeric'});}
+updateClock();setInterval(updateClock,1000);
 
 function updateMetrics(){
-  const t=todayStr();
-  const fm=focusSessions.filter(s=>s.date===t).reduce((a,b)=>a+b.duration,0);
-  document.getElementById('m-focus').textContent=fm+' min';
+  const t=todayStr(),fm=focusSessions.filter(s=>s.date===t).reduce((a,b)=>a+b.duration,0);
+  document.getElementById('m-focus').textContent=fm;
+  if(document.getElementById('s-today'))document.getElementById('s-today').textContent=fm;
+  if(document.getElementById('s-total'))document.getElementById('s-total').textContent=focusSessions.length;
   const done=habitCompletions.filter(c=>c.date===t).length;
   document.getElementById('m-habits').textContent=done+'/'+habits.length;
-  let streak=0;
-  for(let i=0;i<60;i++){const dt=new Date();dt.setDate(dt.getDate()-i);const d=dt.toISOString().split('T')[0];if(habitCompletions.some(c=>c.date===d))streak++;else break;}
-  document.getElementById('m-streak').textContent=streak+'d';
+  if(document.getElementById('h-done'))document.getElementById('h-done').textContent=done;
+  let streak=0;for(let i=0;i<60;i++){const dt=new Date();dt.setDate(dt.getDate()-i);if(habitCompletions.some(c=>c.date===dt.toISOString().split('T')[0]))streak++;else break;}
+  document.getElementById('m-streak').textContent=streak;
+  if(document.getElementById('h-streak2'))document.getElementById('h-streak2').textContent=streak;
   const latest=[...healthLogs].sort((a,b)=>b.date.localeCompare(a.date))[0];
-  document.getElementById('m-sleep').textContent=latest&&latest.sleep?(latest.sleep+'h'):'—';
+  document.getElementById('m-sleep').textContent=latest?.sleep?(latest.sleep+'h'):'—';
 }
 
-// ── Navigation ───────────────────────────────────────────────────────
 function showScreen(name,btn){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sc-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='focus'){renderSessList();renderFocusChart();}
-  if(name==='habits'){renderHabits();renderHabitsChart();}
-  if(name==='health'){prefillHealth();renderHealthCharts();}
-  if(name==='checklist')renderChecklist();
+  document.getElementById('sc-'+name).classList.add('active');btn.classList.add('active');
+  updateMetrics();
+  setTimeout(()=>{
+    if(name==='focus'){renderSessList();renderFocusChart();}
+    if(name==='habits'){renderHabits();renderHabitsChart();}
+    if(name==='health'){prefillHealth();renderHealthCharts();}
+    if(name==='checklist')renderChecklist();
+  },30);
 }
 
-// ── Timer ────────────────────────────────────────────────────────────
-function updateTimerDisplay(){const m=Math.floor(timerSecs/60),s=timerSecs%60;document.getElementById('timer-display').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
-function setPreset(v){if(timerInterval){clearInterval(timerInterval);timerInterval=null;timerRunning=false;}timerSecs=parseInt(v)*60;timerElapsed=0;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='Ready';updateTimerDisplay();}
+function updateRing(){const c=490,p=timerTotal>0?(timerTotal-timerSecs)/timerTotal:0;document.getElementById('ring').style.strokeDashoffset=c-(p*c);}
+function updateTimerDisplay(){const m=Math.floor(timerSecs/60),s=timerSecs%60;document.getElementById('timer-display').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;updateRing();}
+function setPreset(v){if(timerInterval){clearInterval(timerInterval);timerInterval=null;timerRunning=false;}timerSecs=parseInt(v)*60;timerTotal=timerSecs;timerElapsed=0;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='READY';updateTimerDisplay();}
 function toggleTimer(){
-  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('btn-start').textContent='Resume';document.getElementById('timer-status').textContent='Paused';if(timerElapsed>0)document.getElementById('btn-log').style.display='';}
-  else{timerRunning=true;document.getElementById('btn-start').textContent='Pause';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='In session...';timerInterval=setInterval(()=>{timerSecs--;timerElapsed++;updateTimerDisplay();if(timerSecs<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='';document.getElementById('timer-status').textContent='Done! 🎯';document.getElementById('timer-display').textContent='00:00';}},1000);}
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('btn-start').textContent='Resume';document.getElementById('timer-status').textContent='PAUSED';if(timerElapsed>0)document.getElementById('btn-log').style.display='';}
+  else{timerRunning=true;document.getElementById('btn-start').textContent='Pause';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='IN SESSION';timerInterval=setInterval(()=>{timerSecs--;timerElapsed++;updateTimerDisplay();if(timerSecs<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='';document.getElementById('timer-status').textContent='COMPLETE';}},1000);}
 }
-function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerElapsed=0;const v=document.getElementById('timer-preset').value;timerSecs=parseInt(v)*60;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='Ready';updateTimerDisplay();}
-function logSession(){const mins=Math.round(timerElapsed/60);if(mins<1)return;const sel=document.getElementById('timer-preset');const label=sel.options[sel.selectedIndex].text.split(' — ')[0];focusSessions.push({id:Date.now(),date:todayStr(),duration:mins,label});ls.set('focus_sessions',focusSessions);resetTimer();updateMetrics();renderSessList();renderFocusChart();}
-function renderSessList(){const el=document.getElementById('sess-list');const recent=[...focusSessions].sort((a,b)=>b.id-a.id).slice(0,6);if(!recent.length){el.innerHTML='<p class="empty">No sessions yet — start your first one!</p>';return;}el.innerHTML=recent.map(s=>`<div class="sess-row"><span style="color:var(--muted);font-size:11px">${s.date===todayStr()?'Today':s.date}</span><span style="flex:1;padding-left:8px">${s.label}</span><span class="sess-badge">${s.duration} min</span><button class="delx" onclick="delSess(${s.id})">×</button></div>`).join('');}
-function delSess(id){focusSessions=focusSessions.filter(s=>s.id!==id);ls.set('focus_sessions',focusSessions);updateMetrics();renderSessList();renderFocusChart();}
-function renderFocusChart(){const days=last7(),data=days.map(d=>focusSessions.filter(s=>s.date===d).reduce((a,b)=>a+b.duration,0));const ctx=document.getElementById('ch-focus');if(!ctx)return;if(cFocus)cFocus.destroy();cFocus=new Chart(ctx,{type:'bar',data:{labels:days.map(dayLbl),datasets:[{data,backgroundColor:'#4f9cf9',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{size:11}}},x:{grid:{display:false},ticks:{color:'#555',font:{size:11},autoSkip:false}}}}});}
+function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerElapsed=0;const v=document.getElementById('timer-preset').value;timerSecs=parseInt(v)*60;timerTotal=timerSecs;document.getElementById('btn-start').textContent='Start';document.getElementById('btn-log').style.display='none';document.getElementById('timer-status').textContent='READY';updateTimerDisplay();}
+function logSession(){const mins=Math.round(timerElapsed/60);if(mins<1)return;const sel=document.getElementById('timer-preset');focusSessions.push({id:Date.now(),date:todayStr(),duration:mins,label:sel.options[sel.selectedIndex].text.split(' — ')[0]});ls.set('fs',focusSessions);resetTimer();updateMetrics();renderSessList();renderFocusChart();}
+function renderSessList(){const el=document.getElementById('sess-list');const r=[...focusSessions].sort((a,b)=>b.id-a.id).slice(0,6);if(!r.length){el.innerHTML='<p class="empty">No sessions yet.</p>';return;}el.innerHTML=r.map(s=>`<div class="sess-item"><div class="sess-dot"></div><span class="sess-name">${s.label}</span><span class="sess-date">${s.date===todayStr()?'today':s.date}</span><span class="sess-badge">${s.duration}m</span><button class="delx" onclick="delSess(${s.id})">×</button></div>`).join('');}
+function delSess(id){focusSessions=focusSessions.filter(s=>s.id!==id);ls.set('fs',focusSessions);updateMetrics();renderSessList();renderFocusChart();}
 
-// ── Habits ───────────────────────────────────────────────────────────
-function addHabit(){const inp=document.getElementById('new-hab');const name=inp.value.trim();if(!name)return;habits.push({id:Date.now(),name});ls.set('habits',habits);inp.value='';updateMetrics();renderHabits();renderHabitsChart();}
-function toggleHabit(id){const t=todayStr();const idx=habitCompletions.findIndex(c=>c.habitId===id&&c.date===t);if(idx>=0)habitCompletions.splice(idx,1);else habitCompletions.push({habitId:id,date:t});ls.set('habit_completions',habitCompletions);updateMetrics();renderHabits();renderHabitsChart();}
-function delHabit(id){habits=habits.filter(h=>h.id!==id);habitCompletions=habitCompletions.filter(c=>c.habitId!==id);ls.set('habits',habits);ls.set('habit_completions',habitCompletions);updateMetrics();renderHabits();renderHabitsChart();}
+const cOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+const gStyle={grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#3a3a52',font:{size:10,family:'DM Mono'}}};
+const xStyle={grid:{display:false},ticks:{color:'#3a3a52',font:{size:10,family:'DM Mono'},autoSkip:false}};
+
+function renderFocusChart(){const days=last7(),data=days.map(d=>focusSessions.filter(s=>s.date===d).reduce((a,b)=>a+b.duration,0));const ctx=document.getElementById('ch-focus');if(!ctx)return;if(cFocus)cFocus.destroy();cFocus=new Chart(ctx,{type:'bar',data:{labels:days.map(dayLbl),datasets:[{data,backgroundColor:'rgba(0,229,255,0.45)',hoverBackgroundColor:'#00e5ff',borderRadius:5,borderSkipped:false}]},options:{...cOpts,scales:{y:{...gStyle,beginAtZero:true},x:xStyle}}});}
+function addHabit(){const inp=document.getElementById('new-hab');const name=inp.value.trim();if(!name)return;habits.push({id:Date.now(),name});ls.set('hab',habits);inp.value='';updateMetrics();renderHabits();renderHabitsChart();}
+function toggleHabit(id){const t=todayStr();const idx=habitCompletions.findIndex(c=>c.habitId===id&&c.date===t);if(idx>=0)habitCompletions.splice(idx,1);else habitCompletions.push({habitId:id,date:t});ls.set('hc',habitCompletions);updateMetrics();renderHabits();renderHabitsChart();}
+function delHabit(id){habits=habits.filter(h=>h.id!==id);habitCompletions=habitCompletions.filter(c=>c.habitId!==id);ls.set('hab',habits);ls.set('hc',habitCompletions);updateMetrics();renderHabits();renderHabitsChart();}
 function renderHabits(){const el=document.getElementById('hab-list');if(!habits.length){el.innerHTML='<p class="empty">No habits yet — add one below!</p>';return;}const t=todayStr(),days=last7();el.innerHTML=habits.map(h=>{const done=habitCompletions.some(c=>c.habitId===h.id&&c.date===t);const dots=days.map(d=>`<div class="hdot${habitCompletions.some(c=>c.habitId===h.id&&c.date===d)?' on':''}"></div>`).join('');return`<div class="hab-row"><div class="hab-chk${done?' done':''}" onclick="toggleHabit(${h.id})"></div><span class="hab-name${done?' done':''}">${h.name}</span><div class="hab-dots">${dots}</div><button class="delx" onclick="delHabit(${h.id})">×</button></div>`;}).join('');}
-function renderHabitsChart(){const days=last7(),data=days.map(d=>{if(!habits.length)return 0;const n=habits.filter(h=>habitCompletions.some(c=>c.habitId===h.id&&c.date===d)).length;return Math.round((n/habits.length)*100);});const ctx=document.getElementById('ch-habits');if(!ctx)return;if(cHabits)cHabits.destroy();cHabits=new Chart(ctx,{type:'bar',data:{labels:days.map(dayLbl),datasets:[{data,backgroundColor:'#4ade80',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{size:11},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:'#555',font:{size:11},autoSkip:false}}}}});}
-
-// ── Health ───────────────────────────────────────────────────────────
+function renderHabitsChart(){const days=last7(),data=days.map(d=>{if(!habits.length)return 0;return Math.round((habits.filter(h=>habitCompletions.some(c=>c.habitId===h.id&&c.date===d)).length/habits.length)*100);});const ctx=document.getElementById('ch-habits');if(!ctx)return;if(cHabits)cHabits.destroy();cHabits=new Chart(ctx,{type:'bar',data:{labels:days.map(dayLbl),datasets:[{data,backgroundColor:'rgba(57,217,138,0.45)',hoverBackgroundColor:'#39d98a',borderRadius:5,borderSkipped:false}]},options:{...cOpts,scales:{y:{...gStyle,beginAtZero:true,max:100,ticks:{...gStyle.ticks,callback:v=>v+'%'}},x:xStyle}}});}
 function prefillHealth(){const log=healthLogs.find(l=>l.date===todayStr());if(!log)return;if(log.sleep)document.getElementById('h-sleep').value=log.sleep;if(log.water)document.getElementById('h-water').value=log.water;if(log.steps)document.getElementById('h-steps').value=log.steps;}
-function logHealth(){const sleep=parseFloat(document.getElementById('h-sleep').value)||null,water=parseInt(document.getElementById('h-water').value)||null,steps=parseInt(document.getElementById('h-steps').value)||null;if(!sleep&&!water&&!steps)return;const t=todayStr(),idx=healthLogs.findIndex(l=>l.date===t),entry={date:t,sleep,water,steps};if(idx>=0)healthLogs[idx]=entry;else healthLogs.push(entry);ls.set('health_logs',healthLogs);updateMetrics();renderHealthCharts();const btn=document.getElementById('health-btn');btn.textContent='Saved ✓';setTimeout(()=>{btn.textContent='Save log';},1500);}
-function renderHealthCharts(){const days=last7(),labels=days.map(dayLbl),sd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.sleep??null;}),wd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.water??null;}),spd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.steps??null;});const ctx1=document.getElementById('ch-h1');if(ctx1){if(cH1)cH1.destroy();cH1=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Sleep',data:sd,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.1)',tension:.3,yAxisID:'y1',spanGaps:true,pointRadius:4},{label:'Water',data:wd,borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,.1)',tension:.3,yAxisID:'y2',spanGaps:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y1:{beginAtZero:true,position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{size:11}}},y2:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#555',font:{size:11}}},x:{grid:{display:false},ticks:{color:'#555',font:{size:11},autoSkip:false}}}}});}const ctx2=document.getElementById('ch-h2');if(ctx2){if(cH2)cH2.destroy();cH2=new Chart(ctx2,{type:'bar',data:{labels,datasets:[{data:spd,backgroundColor:'#f59e0b',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{size:11},callback:v=>v>=1000?(v/1000).toFixed(1)+'k':String(v)}},x:{grid:{display:false},ticks:{color:'#555',font:{size:11},autoSkip:false}}}}});}}
+function logHealth(){const sleep=parseFloat(document.getElementById('h-sleep').value)||null,water=parseInt(document.getElementById('h-water').value)||null,steps=parseInt(document.getElementById('h-steps').value)||null;if(!sleep&&!water&&!steps)return;const t=todayStr(),idx=healthLogs.findIndex(l=>l.date===t),entry={date:t,sleep,water,steps};if(idx>=0)healthLogs[idx]=entry;else healthLogs.push(entry);ls.set('hl',healthLogs);updateMetrics();renderHealthCharts();const btn=document.getElementById('health-btn');btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save log',1500);}
+function renderHealthCharts(){const days=last7(),labels=days.map(dayLbl),sd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.sleep??null;}),wd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.water??null;}),spd=days.map(d=>{const l=healthLogs.find(x=>x.date===d);return l?.steps??null;});const ctx1=document.getElementById('ch-h1');if(ctx1){if(cH1)cH1.destroy();cH1=new Chart(ctx1,{type:'line',data:{labels,datasets:[{data:sd,borderColor:'#b794f4',backgroundColor:'rgba(183,148,244,0.08)',tension:.4,yAxisID:'y1',spanGaps:true,pointRadius:4,pointBackgroundColor:'#b794f4'},{data:wd,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.08)',tension:.4,yAxisID:'y2',spanGaps:true,pointRadius:4,pointBackgroundColor:'#00e5ff'}]},options:{...cOpts,scales:{y1:{beginAtZero:true,position:'left',...gStyle},y2:{beginAtZero:true,position:'right',grid:{display:false},ticks:{...gStyle.ticks}},x:xStyle}}});}const ctx2=document.getElementById('ch-h2');if(ctx2){if(cH2)cH2.destroy();cH2=new Chart(ctx2,{type:'bar',data:{labels,datasets:[{data:spd,backgroundColor:'rgba(255,184,0,0.45)',hoverBackgroundColor:'#ffb800',borderRadius:5,borderSkipped:false}]},options:{...cOpts,scales:{y:{...gStyle,beginAtZero:true,ticks:{...gStyle.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'k':String(v)}},x:xStyle}}});}}
 
-// ── Checklist Data ────────────────────────────────────────────────────
-const DAYS=[
-  {name:"Monday",sub:"High-Intensity Upper Body Strength",blocks:[
-    {t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},
-    {t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},
-    {t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs).","Buy-in: Visualize today's upper body session — each lift.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},
-    {t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},
-    {t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Physical and mental warm-up starts now.","No passive scrolling. Switch into training mode.","Arrive at gym by 3:50 PM."]},
-    {t:"3:55–5:00 PM",ti:"Upper Body Strength",tag:"tg",items:["Warm-up: 5–10 min dynamic shoulder & chest mobility.","Barbell Bench Press — 4×4–6 (heavy, progressive overload).","Barbell Bent-Over Row — 4×4–6 (control the eccentric).","Overhead Press — 3×5–6.","Weighted Pull-Ups / Lat Pulldown — 3×5–6.","Incline Dumbbell Press — 3×6–8.","Cool-down: 3 min chest and lat stretch."]},
-    {t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},
-    {t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},
-    {t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: gym kit, laptop, notebooks.","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}
-  ]},
-  {name:"Tuesday",sub:"High-Intensity Lower Body Strength",blocks:[
-    {t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},
-    {t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},
-    {t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + complex carbs — leg day ahead).","Buy-in: Visualize the squat — depth, drive, posture.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},
-    {t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},
-    {t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Activate mindset for heavy lower session.","Breathe and focus. Warm-up starts now.","Arrive at gym by 3:50 PM."]},
-    {t:"3:55–5:00 PM",ti:"Lower Body Strength",tag:"tg",items:["Warm-up: 5–10 min hip, glute & hamstring activation.","Barbell Back Squat — 4×4–6 (progressive overload).","Romanian Deadlift — 4×4–6 (slow eccentric).","Leg Press — 3×6–8 (heavy).","Nordic Curl / Lying Leg Curl — 3×6–8.","Walking Lunges — 3×8 each leg.","Cool-down: 3 min hip flexor and quad stretch."]},
-    {t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},
-    {t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},
-    {t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: gym kit, laptop, notebooks.","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}
-  ]},
-  {name:"Wednesday",sub:"High-Intensity Push Hypertrophy",blocks:[
-    {t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},
-    {t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},
-    {t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + moderate carbs).","Buy-in: Visualize push session — full range, controlled reps, maximum pump.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},
-    {t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},
-    {t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Hypertrophy focus: controlled reps, full range of motion.","No passive scrolling. Arrive at gym by 3:50 PM."]},
-    {t:"3:55–5:00 PM",ti:"Push Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min shoulder circles, band pull-aparts.","Incline Barbell/Dumbbell Press — 4×8–12.","Seated Dumbbell Shoulder Press — 3×10–12.","Cable Chest Fly / Pec Deck — 3×12–15.","Lateral Raises — 4×12–15.","Tricep Rope Pushdown — 3×12–15.","Overhead Tricep Extension — 3×10–12.","Cool-down: 3 min chest opener and shoulder stretch."]},
-    {t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},
-    {t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},
-    {t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag (no gym kit — recovery day).","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}
-  ]},
-  {name:"Thursday",sub:"Momentum Day — Active Recovery",blocks:[
-    {t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a nourishing breakfast — whole foods, recovery day.","Pack bag (no gym kit today).","Commute to campus."]},
-    {t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},
-    {t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat recovery-focused lunch (anti-inflammatory foods, hydration).","Buy-in: Identify soreness areas — plan today's mobility focus.","Check week's academic progress — ahead or behind?","Rest and decompress intentionally."]},
-    {t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},
-    {t:"3:00–3:50 PM",ti:"Transition — easy walk",tag:"tr",items:["Walk at a restorative, easy pace.","Breathe deeply. This walk is part of your recovery.","Arrive at recovery space by 3:50 PM."]},
-    {t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck rolls.","5 min: Hip flexor stretch (couch stretch / 90-90).","5 min: Thoracic spine mobility (foam roller / cat-cow).","5 min: Hamstring and calf stretch.","5 min: Shoulder and chest opener.","5 min: Glute and piriformis stretch (figure-4 / pigeon).","Focus on areas most fatigued from Mon–Wed. No intensity."]},
-    {t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Reflecting: recovering well heading into Friday?"]},
-    {t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review this week's Calculus — identify weak points.","Complete current Physics problem sets.","Review this week's Physics — identify weak points.","Use tonight to get ahead — lighter physical load = more mental capacity."]},
-    {t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: Pull day gym kit, laptop, notebooks.","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}
-  ]},
-  {name:"Friday",sub:"High-Intensity Pull Hypertrophy",blocks:[
-    {t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Pull day. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},
-    {t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},
-    {t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs — finish the week strong).","Buy-in: Visualize pull session — lat engagement, peak contraction.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},
-    {t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},
-    {t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Friday — finish the week with intent.","Mentally close out the academic week on this walk.","Arrive at gym by 3:50 PM."]},
-    {t:"3:55–5:00 PM",ti:"Pull Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min scapular activation, band pull-aparts.","Pull-Ups / Assisted Pull-Ups — 4×8–12 (full range, controlled).","Cable Row / Seated Row — 4×10–12 (drive elbows back).","Single-Arm Dumbbell Row — 3×10–12 each side.","Face Pulls — 4×15 (external rotation focus).","Barbell / Dumbbell Curl — 3×12–15.","Hammer Curl — 3×12–15.","Cool-down: 3 min lat and bicep stretch."]},
-    {t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Acknowledge the work you put in this week.","Log workout (weights, reps, notes)."]},
-    {t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Begin consolidating this week's Calculus notes.","Complete current Physics problem sets.","Begin consolidating this week's Physics notes.","Identify what to carry into the weekend deep work block."]},
-    {t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack Saturday bag: Legs gym kit, weekend study materials.","Set Saturday alarm (7:00 AM — hold the anchor).","No stimulating content after 9:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}
-  ]},
-  {name:"Saturday",sub:"High-Intensity Legs Hypertrophy",blocks:[
-    {t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds on weekends.","Hydrate immediately. Complete morning hygiene.","Eat a high-carb, high-protein breakfast — big leg session ahead."]},
-    {t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — solidify any gaps.","Broad review of the week's Physics — solidify any gaps.","Tackle outstanding problem sets or projects.","Get ahead on next week's material if current work is complete.","Work in 50-min focused blocks with short breaks."]},
-    {t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for the week ahead if needed.","Handle life admin: laundry, groceries, errands.","Enjoy a genuine hobby or leisure activity.","Eat a performance lunch by 2:30 PM — fuel the session."]},
-    {t:"3:00–3:50 PM",ti:"Transition — travel to gym",tag:"tr",items:["Depart at 3:00 PM — same as every weekday.","The habit lock: 3:55 PM is gym time, every single day.","Arrive and mobilize."]},
-    {t:"3:55–5:00 PM",ti:"Legs Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min hip circles, glute activation, bodyweight squats.","Leg Press — 4×10–15 (high volume, controlled squeeze).","Romanian Deadlift — 4×10–12 (slow eccentric).","Hack Squat / Goblet Squat — 3×12–15.","Lying Leg Curl — 3×12–15.","Leg Extension — 3×15 (full squeeze at top).","Standing / Seated Calf Raise — 4×15–20.","Cool-down: 3 min full lower body stretch."]},
-    {t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Review upcoming Calculus material — preview if available.","Review upcoming Physics material — preview if available.","Plan the week's academic priorities.","Prepare weekly schedule — anything unusual next week?","Wind down intentionally after 8:30 PM."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Another strong week begins in 9 hours."]}
-  ]},
-  {name:"Sunday",sub:"Momentum Day — Active Recovery",blocks:[
-    {t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds.","Hydrate immediately. Complete morning hygiene.","Eat a nourishing breakfast — recovery day, whole foods."]},
-    {t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — resolve unresolved concepts.","Broad review of the week's Physics — resolve unresolved concepts.","Complete any remaining assignments or problem sets.","Begin preparing for the upcoming week's demands.","Work in 50-min focused blocks with short breaks."]},
-    {t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for Mon–Wed window.","Handle any remaining life admin.","Enjoy a genuine rest activity — CNS needs low stimulation today.","Eat a balanced lunch. Light recovery session ahead."]},
-    {t:"3:00–3:50 PM",ti:"Transition — travel to recovery space",tag:"tr",items:["Depart at 3:00 PM — same time as every other day this week.","Walk at a relaxed pace. Nervous system recovery.","Arrive and prepare your mat and space."]},
-    {t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck and shoulder rolls.","5 min: Quad and hip flexor stretch (couch stretch each side).","5 min: Thoracic spine opener (foam roller / book opener).","5 min: Hamstring and calf stretch (downward dog progressions).","5 min: Glute and piriformis stretch (pigeon / figure-4).","5 min: Full spinal decompress — child's pose, supine twist.","Clear fatigue from the full week. No intensity — only reset."]},
-    {t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Finalize the week-ahead plan. Lock in Monday's priorities.","One brief honest reflection: what worked, what didn't?","Ensure Monday's bag is packed: gym kit, laptop, notebooks.","Prepare tomorrow's breakfast and meals if possible.","Begin wind-down at 8:30 PM. Protect tonight's sleep above all else."]},
-    {t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. The system resets. Monday is ready."]}
-  ]}
-];
-
+const DAYS=[{name:"Monday",sub:"High-Intensity Upper Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs).","Buy-in: Visualize today's upper body session — each lift.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Physical and mental warm-up starts now.","No passive scrolling. Switch into training mode.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Upper Body Strength",tag:"tg",items:["Warm-up: 5–10 min dynamic shoulder & chest mobility.","Barbell Bench Press — 4×4–6 (heavy, progressive overload).","Barbell Bent-Over Row — 4×4–6 (control the eccentric).","Overhead Press — 3×5–6.","Weighted Pull-Ups / Lat Pulldown — 3×5–6.","Incline Dumbbell Press — 3×6–8.","Cool-down: 3 min chest and lat stretch."]},{t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: gym kit, laptop, notebooks.","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Tuesday",sub:"High-Intensity Lower Body Strength",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + complex carbs).","Buy-in: Visualize the squat — depth, drive, posture.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Activate mindset for heavy lower session.","Breathe and focus. Warm-up starts now.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Lower Body Strength",tag:"tg",items:["Warm-up: 5–10 min hip, glute & hamstring activation.","Barbell Back Squat — 4×4–6 (progressive overload).","Romanian Deadlift — 4×4–6 (slow eccentric).","Leg Press — 3×6–8 (heavy).","Nordic Curl / Lying Leg Curl — 3×6–8.","Walking Lunges — 3×8 each leg.","Cool-down: 3 min hip flexor and quad stretch."]},{t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: gym kit, laptop, notebooks.","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Wednesday",sub:"High-Intensity Push Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + moderate carbs).","Buy-in: Visualize push session — full range, controlled reps.","Review quick academic priorities for the afternoon.","Rest and decompress intentionally."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Hypertrophy focus: controlled reps, full range.","No passive scrolling. Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Push Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min shoulder circles, band pull-aparts.","Incline Barbell/Dumbbell Press — 4×8–12.","Seated Dumbbell Shoulder Press — 3×10–12.","Cable Chest Fly / Pec Deck — 3×12–15.","Lateral Raises — 4×12–15.","Tricep Rope Pushdown — 3×12–15.","Overhead Tricep Extension — 3×10–12.","Cool-down: 3 min chest opener and shoulder stretch."]},{t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Shift to deep work mode.","Log workout (weights, reps, notes)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review today's Calculus lecture notes.","Complete current Physics problem sets.","Review today's Physics lecture notes.","Flag any concepts needing clarification."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag (no gym kit — recovery day).","Set alarm. Review tomorrow's schedule.","No stimulating content after 9:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Thursday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Hydrate immediately.","Eat a nourishing breakfast — whole foods, recovery day.","Pack bag (no gym kit today).","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat recovery-focused lunch (anti-inflammatory, hydration).","Buy-in: Identify soreness areas — plan today's mobility focus.","Check week's academic progress — ahead or behind?"]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — easy walk",tag:"tr",items:["Walk at a restorative, easy pace.","Breathe deeply. This walk is part of your recovery.","Arrive at recovery space by 3:50 PM."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck rolls.","5 min: Hip flexor stretch (couch stretch / 90-90).","5 min: Thoracic spine mobility (foam roller / cat-cow).","5 min: Hamstring and calf stretch.","5 min: Shoulder and chest opener.","5 min: Glute and piriformis stretch (figure-4 / pigeon).","No intensity — only recovery."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Review this week's Calculus — identify weak points.","Complete current Physics problem sets.","Review this week's Physics — identify weak points."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack tomorrow's bag: Pull day gym kit, laptop, notebooks.","Set alarm. No stimulating content after 9:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Friday",sub:"High-Intensity Pull Hypertrophy",blocks:[{t:"7:00–8:55 AM",ti:"Wake up & commute",tag:"tr",items:["Wake up — no snooze. Pull day. Hydrate immediately.","Complete morning hygiene and grooming.","Eat a protein-forward breakfast.","Pack gym bag and academic materials.","Commute to campus."]},{t:"9:00–11:35 AM",ti:"Academic block 1 — Calculus & Business",tag:"ta",items:["Attend Calculus lecture. Take structured notes.","Attend Business lecture. Take structured notes.","Note any action items or assignments."]},{t:"11:40 AM–1:35 PM",ti:"Lunch + buy-in task",tag:"tr",items:["Eat a performance lunch (protein + carbs — finish the week strong).","Buy-in: Visualize pull session — lat engagement, peak contraction.","Review quick academic priorities for the afternoon."]},{t:"1:35–2:55 PM",ti:"Academic block 2 — Physics",tag:"ta",items:["Attend Physics lecture. Take structured notes.","Note problem sets, labs, or assignments given."]},{t:"3:00–3:50 PM",ti:"Transition — walk to gym",tag:"tr",items:["Begin walk. Friday — finish the week with intent.","Mentally close out the academic week on this walk.","Arrive at gym by 3:50 PM."]},{t:"3:55–5:00 PM",ti:"Pull Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min scapular activation, band pull-aparts.","Pull-Ups / Assisted Pull-Ups — 4×8–12 (full range, controlled).","Cable Row / Seated Row — 4×10–12 (drive elbows back).","Single-Arm Dumbbell Row — 3×10–12 each side.","Face Pulls — 4×15 (external rotation focus).","Barbell / Dumbbell Curl — 3×12–15.","Hammer Curl — 3×12–15.","Cool-down: 3 min lat and bicep stretch."]},{t:"5:05–5:20 PM",ti:"Commute home",tag:"tr",items:["Commute home. Acknowledge the work you put in this week.","Log workout (weights, reps, notes)."]},{t:"5:20–9:00 PM",ti:"Deep work — Calculus & Physics",tag:"tf",items:["Complete current Calculus problem sets.","Begin consolidating this week's Calculus notes.","Complete current Physics problem sets.","Begin consolidating this week's Physics notes."]},{t:"9:00–10:00 PM",ti:"Night routine & pack bag",tag:"tr",items:["Wind down. Reduce screen brightness.","Complete hygiene routine.","Pack Saturday bag: Legs gym kit, weekend study materials.","Set Saturday alarm (7:00 AM — hold the anchor)."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Target 8–9 hours."]}]},{name:"Saturday",sub:"High-Intensity Legs Hypertrophy",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds on weekends.","Hydrate immediately. Complete morning hygiene.","Eat a high-carb, high-protein breakfast — big leg session ahead."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — solidify any gaps.","Broad review of the week's Physics — solidify any gaps.","Tackle outstanding problem sets or projects.","Get ahead on next week's material if current work is complete."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for the week ahead if needed.","Handle life admin: laundry, groceries, errands.","Enjoy a genuine hobby or leisure activity.","Eat a performance lunch by 2:30 PM."]},{t:"3:00–3:50 PM",ti:"Transition — travel to gym",tag:"tr",items:["Depart at 3:00 PM — same as every weekday.","The habit lock: 3:55 PM is gym time, every single day.","Arrive and mobilize."]},{t:"3:55–5:00 PM",ti:"Legs Hypertrophy",tag:"tg",items:["Warm-up: 5–10 min hip circles, glute activation, bodyweight squats.","Leg Press — 4×10–15 (high volume, controlled squeeze).","Romanian Deadlift — 4×10–12 (slow eccentric).","Hack Squat / Goblet Squat — 3×12–15.","Lying Leg Curl — 3×12–15.","Leg Extension — 3×15 (full squeeze at top).","Standing / Seated Calf Raise — 4×15–20.","Cool-down: 3 min full lower body stretch."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Review upcoming Calculus material — preview if available.","Review upcoming Physics material — preview if available.","Plan the week's academic priorities.","Wind down intentionally after 8:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. Another strong week begins in 9 hours."]}]},{name:"Sunday",sub:"Momentum Day — Active Recovery",blocks:[{t:"7:00 AM",ti:"Wake up — hold the anchor",tag:"tr",items:["Wake up at 7:00 AM. The anchor holds.","Hydrate immediately. Complete morning hygiene.","Eat a nourishing breakfast — recovery day, whole foods."]},{t:"8:00 AM–12:00 PM",ti:"Deep work / Project block",tag:"tf",items:["Broad review of the week's Calculus — resolve unresolved concepts.","Broad review of the week's Physics — resolve unresolved concepts.","Complete any remaining assignments or problem sets.","Begin preparing for the upcoming week's demands."]},{t:"12:00–3:00 PM",ti:"Life admin, hobby & prep",tag:"tr",items:["Meal prep for Mon–Wed window.","Handle any remaining life admin.","Enjoy a genuine rest activity — CNS needs low stimulation today.","Eat a balanced lunch."]},{t:"3:00–3:50 PM",ti:"Transition — travel to recovery space",tag:"tr",items:["Depart at 3:00 PM — same time as every other day.","Walk at a relaxed pace. Nervous system recovery.","Arrive and prepare your mat and space."]},{t:"3:55–4:25 PM",ti:"Momentum — 30 min mobility",tag:"tc",items:["5 min: Deep breathing, gentle neck and shoulder rolls.","5 min: Quad and hip flexor stretch (couch stretch each side).","5 min: Thoracic spine opener (foam roller / book opener).","5 min: Hamstring and calf stretch (downward dog progressions).","5 min: Glute and piriformis stretch (pigeon / figure-4).","5 min: Full spinal decompress — child's pose, supine twist.","No intensity — only reset."]},{t:"5:20–9:00 PM",ti:"Evening reset & week ahead planning",tag:"tf",items:["Finalize the week-ahead plan. Lock in Monday's priorities.","One brief honest reflection: what worked, what didn't?","Ensure Monday's bag is packed: gym kit, laptop, notebooks.","Begin wind-down at 8:30 PM."]},{t:"10:00 PM",ti:"Sleep",tag:"tr",items:["Lights out. The system resets. Monday is ready."]}]}];
 const TAG_MAP={tg:'Gym',ta:'Academic',tf:'Deep Work',tr:'Routine',tc:'Recovery'};
 
-// ── Checklist ────────────────────────────────────────────────────────
-function buildDayNav(){
-  const nav=document.getElementById('days-nav');
-  DAYS.forEach((d,i)=>{
-    const btn=document.createElement('button');
-    btn.className='dchip'+(i===activeDay?' active':'');
-    btn.textContent=d.name.slice(0,3);
-    btn.onclick=()=>{activeDay=i;renderChecklist();};
-    nav.appendChild(btn);
-  });
-}
+function buildDayNav(){const nav=document.getElementById('days-nav');DAYS.forEach((d,i)=>{const btn=document.createElement('button');btn.className='dchip'+(i===activeDay?' active':'');btn.textContent=d.name.slice(0,3).toUpperCase();btn.onclick=()=>{activeDay=i;renderChecklist();};nav.appendChild(btn);});}
+function renderChecklist(){document.querySelectorAll('.dchip').forEach((b,i)=>b.classList.toggle('active',i===activeDay));const day=DAYS[activeDay];document.getElementById('cl-sub').textContent=day.sub;let html='';day.blocks.forEach((b,bi)=>{html+=`<div class="cl-block"><div class="blk-hdr"><span class="blk-time">${b.t}</span><span class="blk-title">${b.ti}</span><span class="blk-tag ${b.tag}">${TAG_MAP[b.tag]}</span></div><div class="blk-items">`;b.items.forEach((item,ii)=>{const key=`cl_${activeDay}_${bi}_${ii}`,chk=clState[key]||false;html+=`<div class="chk-row${chk?' done':''}" id="cr-${key}"><input type="checkbox" id="${key}" ${chk?'checked':''} onchange="tickCL(this,'${key}')"><label for="${key}">${item}</label></div>`;});html+='</div></div>';});document.getElementById('cl-blocks').innerHTML=html;updateCLProg();}
+function tickCL(el,key){clState[key]=el.checked;ls.set('cl',clState);const row=document.getElementById('cr-'+key);el.checked?row.classList.add('done'):row.classList.remove('done');updateCLProg();}
+function updateCLProg(){const day=DAYS[activeDay];let total=0,done=0;day.blocks.forEach((b,bi)=>b.items.forEach((_,ii)=>{const key=`cl_${activeDay}_${bi}_${ii}`;total++;if(clState[key])done++;}));const pct=total?Math.round((done/total)*100):0;document.getElementById('cl-fill').style.width=pct+'%';document.getElementById('cl-pct').textContent=pct+'%';}
 
-function renderChecklist(){
-  document.querySelectorAll('.dchip').forEach((b,i)=>b.classList.toggle('active',i===activeDay));
-  const day=DAYS[activeDay];
-  document.getElementById('cl-sub').textContent=day.sub;
-  let html='';
-  day.blocks.forEach((b,bi)=>{
-    html+=`<div class="cl-block"><div class="blk-hdr"><span class="blk-time">${b.t}</span><span class="blk-title">${b.ti}</span><span class="blk-tag ${b.tag}">${TAG_MAP[b.tag]}</span></div><div class="blk-items">`;
-    b.items.forEach((item,ii)=>{
-      const key=`cl_${activeDay}_${bi}_${ii}`;
-      const chk=clState[key]||false;
-      html+=`<div class="chk-row${chk?' done':''}" id="cr-${key}"><input type="checkbox" id="${key}" ${chk?'checked':''} onchange="tickCL(this,'${key}')"><label for="${key}">${item}</label></div>`;
-    });
-    html+='</div></div>';
-  });
-  document.getElementById('cl-blocks').innerHTML=html;
-  updateCLProg();
-}
-
-function tickCL(el,key){
-  clState[key]=el.checked;ls.set('cl_state',clState);
-  const row=document.getElementById('cr-'+key);
-  el.checked?row.classList.add('done'):row.classList.remove('done');
-  updateCLProg();
-}
-
-function updateCLProg(){
-  const day=DAYS[activeDay];let total=0,done=0;
-  day.blocks.forEach((b,bi)=>b.items.forEach((_,ii)=>{const key=`cl_${activeDay}_${bi}_${ii}`;total++;if(clState[key])done++;}));
-  const pct=total?Math.round((done/total)*100):0;
-  document.getElementById('cl-fill').style.width=pct+'%';
-  document.getElementById('cl-pct').textContent=pct+'%';
-}
-
-// ── Service Worker ────────────────────────────────────────────────────
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-
-// ── Init ─────────────────────────────────────────────────────────────
-updateMetrics();
-renderSessList();
-renderFocusChart();
-renderHabits();
-buildDayNav();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+updateMetrics();renderSessList();renderFocusChart();renderHabits();buildDayNav();
 </script>
 </body>
 </html>
