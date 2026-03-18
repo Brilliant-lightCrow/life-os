@@ -1,5 +1,10 @@
-const CACHE = 'life-os-v2';
-const FILES = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'life-os-v3';
+const FILES = [
+  '/life-os/index.html',
+  '/life-os/manifest.json',
+  '/life-os/icon-192.png',
+  '/life-os/icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
